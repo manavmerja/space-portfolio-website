@@ -5,6 +5,8 @@ import AboutSection from "@/components/ui/about-section";
 import TechStack from "@/components/ui/tech-stack";
 import ProjectsSection from "@/components/ui/projects-section";
 import CodingStats from "@/components/ui/coding-stats"; 
+import JourneySection from "@/components/ui/journey-section";
+import FooterSection from "@/components/ui/footer-section";
 
 export default function Home() {
   return (
@@ -15,7 +17,9 @@ export default function Home() {
       <TechStack />
       <ProjectsSection />
       <CodingStats /> 
-      <FloatingAssistant />
+      <JourneySection />
+      <FloatingAssistant /> 
+      <FooterSection />     
     </main>
   );
 }

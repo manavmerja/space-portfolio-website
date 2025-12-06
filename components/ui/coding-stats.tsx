@@ -4,35 +4,48 @@ import React, { useEffect, useState } from "react";
 import { GitHubCalendar } from "react-github-calendar";
 import { motion } from "framer-motion";
 import NumberTicker from "@/components/ui/number-ticker";
-import { ExternalLink, Github } from "lucide-react"; // ✅ Github Icon added
+import { ExternalLink, Github, Zap, Trophy, Calendar } from "lucide-react";
+import RetroGrid from "@/components/ui/retro-grid"; // ✅ Grid Imported
+
+// --- Types ---
+interface GitHubData {
+  total: { [year: string]: number };
+  contributions: Array<{ date: string; count: number; level: number }>;
+}
 
 export default function CodingStats() {
   const [leetcodeData, setLeetcodeData] = useState<any>(null);
+  const [githubData, setGithubData] = useState<GitHubData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchLeetCode = async () => {
+    const fetchData = async () => {
       try {
-        // Note: Using your username manav99135
-        const response = await fetch("https://leetcode-stats-api.herokuapp.com/manav99135");
-        const data = await response.json();
-        if (data.status === "success") {
-          setLeetcodeData(data);
+        const lcResponse = await fetch("https://leetcode-stats-api.herokuapp.com/manav99135");
+        const lcData = await lcResponse.json();
+        if (lcData.status === "success") {
+          setLeetcodeData(lcData);
         }
+
+        const ghResponse = await fetch("https://github-contributions-api.jogruber.de/v4/manavmerja?y=last");
+        const ghData = await ghResponse.json();
+        setGithubData(ghData);
+
       } catch (error) {
-        console.error("Error fetching LeetCode stats:", error);
+        console.error("Error fetching stats:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchLeetCode();
+    fetchData();
   }, []);
 
   const stats = leetcodeData || { 
     totalSolved: 0, 
     easySolved: 0, mediumSolved: 0, hardSolved: 0, 
-    totalQuestions: 3000 
+    totalQuestions: 3000,
+    submissionCalendar: {}
   };
 
   const calculateStroke = (solved: number, total: number, radius: number) => {
@@ -41,9 +54,114 @@ export default function CodingStats() {
     return circumference - (percentage / 100) * circumference;
   };
 
+  const getLeetCodeStreak = (calendar: any) => {
+    if (!calendar) return 0;
+    const timestamps = Object.keys(calendar).map(Number).sort((a, b) => b - a);
+    if (timestamps.length === 0) return 0;
+    let streak = 0;
+    const oneDay = 24 * 60 * 60 * 1000;
+    let currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0);
+    let lastSubDate = new Date(timestamps[0] * 1000);
+    lastSubDate.setHours(0,0,0,0);
+    const diff = (currentDate.getTime() - lastSubDate.getTime()) / oneDay;
+    if (diff > 1) return 0; 
+    for (let i = 0; i < timestamps.length; i++) {
+        const date = new Date(timestamps[i] * 1000);
+        date.setHours(0,0,0,0);
+        const expectedDate = new Date(currentDate);
+        expectedDate.setDate(currentDate.getDate() - streak - (diff === 0 ? 0 : 1));
+        expectedDate.setHours(0,0,0,0);
+        if (date.getTime() === expectedDate.getTime()) streak++;
+        else if (date.getTime() < expectedDate.getTime()) break;
+    }
+    return streak;
+  };
+
+  // Helper to format Date: "Nov 25"
+  const formatDate = (dateString: string) => {
+    const options: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString('en-US', options);
+  };
+
+  // ✅ Updated Logic: Calculate Streak AND Date Range
+  const calculateGitHubStreak = () => {
+    if (!githubData?.contributions) return { current: 0, currentRange: "", longest: 0, longestRange: "", total: 0, totalRange: "" };
+    
+    const contribs = githubData.contributions; // Sorted by date ascending
+    const total = Object.values(githubData.total).reduce((a, b) => a + b, 0);
+    const firstDate = contribs[0]?.date ? formatDate(contribs[0].date) : "";
+    const lastDate = "Present";
+
+    // 1. Calculate Longest Streak (Iterate Forward)
+    let maxStreak = 0;
+    let tempStreak = 0;
+    let maxStart = "";
+    let maxEnd = "";
+    let tempStart = "";
+
+    for (const day of contribs) {
+        if (day.count > 0) {
+            if (tempStreak === 0) tempStart = day.date;
+            tempStreak++;
+        } else {
+            if (tempStreak > maxStreak) {
+                maxStreak = tempStreak;
+                maxStart = tempStart;
+                maxEnd = contribs[contribs.indexOf(day) - 1].date;
+            }
+            tempStreak = 0;
+        }
+    }
+    // Check end of array case
+    if (tempStreak > maxStreak) {
+        maxStreak = tempStreak;
+        maxStart = tempStart;
+        maxEnd = contribs[contribs.length - 1].date;
+    }
+
+    // 2. Calculate Current Streak (Iterate Backward)
+    const reversed = [...contribs].reverse();
+    let currentStreak = 0;
+    let currentStart = "";
+    let currentEnd = reversed[0].date; // Today
+    
+    // Check if streak is broken today/yesterday
+    let isStreakActive = reversed[0].count > 0 || reversed[1].count > 0;
+    
+    if (isStreakActive) {
+        for (const day of reversed) {
+            if (day.count > 0) {
+                currentStreak++;
+                currentStart = day.date;
+            } else {
+                // Allow one gap only if it's today and we haven't committed yet (handled by isActive check), 
+                // but inside the loop, the first 0 breaks the streak.
+                if (day.date !== currentEnd) break; 
+            }
+        }
+    }
+
+    return { 
+        current: currentStreak, 
+        currentRange: currentStreak > 0 ? `${formatDate(currentStart)} - ${formatDate(currentEnd)}` : "No active streak",
+        longest: maxStreak, 
+        longestRange: `${formatDate(maxStart)} - ${formatDate(maxEnd)}`,
+        total, 
+        totalRange: `${firstDate} - ${lastDate}`
+    };
+  };
+
+  const ghStats = calculateGitHubStreak();
+
   return (
     <section id="stats" className="w-full py-20 bg-black relative z-10 overflow-hidden">
       
+      {/* ✅ ADDED RETRO GRID HERE TOO FOR CONTINUITY */}
+      <div className="absolute inset-0 z-0 h-full w-full">
+         <RetroGrid className="opacity-100" />
+      </div>
+
       {/* HEADER */}
       <div className="text-center mb-16 relative z-20 px-4">
         <h2 className="text-4xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500 font-space-grotesk">
@@ -54,67 +172,64 @@ export default function CodingStats() {
         </p>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-10">
+      <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 relative z-20">
         
         {/* === LEFT: LEETCODE HUD === */}
-        <div className="relative flex flex-col items-center justify-center p-8 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-sm shadow-2xl group">
+        <div className="relative flex flex-col items-center justify-center p-6 md:p-8 rounded-3xl bg-black/40 border border-white/10 backdrop-blur-sm shadow-2xl group min-h-[400px]">
           
-          {/* 🟠 FLOATING LEETCODE ICON */}
+          <div className="absolute top-6 left-6 flex items-center gap-2 z-30">
+            <div className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 backdrop-blur-md">
+                <span className="text-orange-500 text-sm">🔥</span>
+                <span className="text-orange-400 text-xs font-mono font-bold">
+                {getLeetCodeStreak(stats.submissionCalendar)} Day Streak
+                </span>
+            </div>
+          </div>
+
           <motion.a 
             href="https://leetcode.com/u/manav99135/" 
             target="_blank" 
             rel="noopener noreferrer"
-            className="absolute top-6 right-6 p-3 rounded-full bg-white/5 border border-white/10 text-gray-400 hover:text-orange-500 hover:border-orange-500/50 hover:bg-orange-500/10 transition-all duration-300 shadow-[0_0_15px_rgba(0,0,0,0.5)] hover:shadow-[0_0_20px_rgba(249,115,22,0.3)]"
-            animate={{ y: [0, -8, 0] }} // Floating animation
+            className="absolute top-6 right-6 p-3 rounded-full bg-white/5 border border-white/10 text-gray-400 hover:text-orange-500 hover:border-orange-500/50 hover:bg-orange-500/10 transition-all duration-300 shadow-[0_0_15px_rgba(0,0,0,0.5)] hover:shadow-[0_0_20px_rgba(249,115,22,0.3)] z-30"
+            animate={{ y: [0, -8, 0] }}
             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
             whileHover={{ scale: 1.1 }}
           >
             <ExternalLink size={20} />
           </motion.a>
 
-          <h3 className="text-xl font-bold text-gray-200 mb-6 flex items-center gap-2 self-start md:self-center">
+          <h3 className="text-xl font-bold text-gray-200 mb-8 mt-8 md:mt-0 flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse"/> LeetCode Stats
           </h3>
           
-          <div className="relative w-64 h-64 flex items-center justify-center">
-            {/* SVG RINGS CONTAINER */}
+          <div className="relative w-56 h-56 md:w-64 md:h-64 flex items-center justify-center">
             <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
-              
-              {/* Ring 1: Easy */}
               <circle cx="50" cy="50" r="45" fill="none" stroke="#1e293b" strokeWidth="8" />
               <motion.circle
                 cx="50" cy="50" r="45" fill="none" stroke="#22d3ee" strokeWidth="8"
-                strokeLinecap="round"
-                strokeDasharray="283"
+                strokeLinecap="round" strokeDasharray="283"
                 initial={{ strokeDashoffset: 283 }}
                 animate={{ strokeDashoffset: calculateStroke(stats.easySolved, stats.totalEasy || 800, 45) }}
                 transition={{ duration: 2, ease: "easeOut" }}
               />
-
-              {/* Ring 2: Medium */}
               <circle cx="50" cy="50" r="35" fill="none" stroke="#1e293b" strokeWidth="8" />
               <motion.circle
                 cx="50" cy="50" r="35" fill="none" stroke="#c026d3" strokeWidth="8"
-                strokeLinecap="round"
-                strokeDasharray="220"
+                strokeLinecap="round" strokeDasharray="220"
                 initial={{ strokeDashoffset: 220 }}
                 animate={{ strokeDashoffset: calculateStroke(stats.mediumSolved, stats.totalMedium || 1600, 35) }}
                 transition={{ duration: 2, delay: 0.2, ease: "easeOut" }}
               />
-
-              {/* Ring 3: Hard */}
               <circle cx="50" cy="50" r="25" fill="none" stroke="#1e293b" strokeWidth="8" />
               <motion.circle
                 cx="50" cy="50" r="25" fill="none" stroke="#f472b6" strokeWidth="8"
-                strokeLinecap="round"
-                strokeDasharray="157"
+                strokeLinecap="round" strokeDasharray="157"
                 initial={{ strokeDashoffset: 157 }}
                 animate={{ strokeDashoffset: calculateStroke(stats.hardSolved, stats.totalHard || 600, 25) }}
                 transition={{ duration: 2, delay: 0.4, ease: "easeOut" }}
               />
             </svg>
 
-            {/* Center Text */}
             <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
               {loading ? (
                 <span className="text-sm text-gray-400 animate-pulse">Scanning...</span>
@@ -129,7 +244,7 @@ export default function CodingStats() {
             </div>
           </div>
 
-          <div className="flex gap-4 mt-6 text-xs font-mono">
+          <div className="flex gap-3 md:gap-4 mt-6 text-xs font-mono flex-wrap justify-center">
             <div className="flex items-center gap-1 text-gray-300"><div className="w-3 h-3 rounded bg-cyan-400"/> Easy: <span className="text-white font-bold">{stats.easySolved}</span></div>
             <div className="flex items-center gap-1 text-gray-300"><div className="w-3 h-3 rounded bg-purple-600"/> Med: <span className="text-white font-bold">{stats.mediumSolved}</span></div>
             <div className="flex items-center gap-1 text-gray-300"><div className="w-3 h-3 rounded bg-pink-400"/> Hard: <span className="text-white font-bold">{stats.hardSolved}</span></div>
@@ -138,31 +253,30 @@ export default function CodingStats() {
 
 
         {/* === RIGHT: GITHUB GRAPH === */}
-        <div className="relative flex flex-col items-center justify-center p-8 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-sm shadow-2xl overflow-x-auto">
+        <div className="relative flex flex-col items-center justify-center p-6 md:p-8 rounded-3xl bg-black/40 border border-white/10 backdrop-blur-sm shadow-2xl overflow-hidden min-h-[400px]">
           
-          {/* 🟢 FLOATING GITHUB ICON */}
           <motion.a 
             href="https://github.com/manavmerja" 
             target="_blank" 
             rel="noopener noreferrer"
-            className="absolute top-6 right-6 p-3 rounded-full bg-white/5 border border-white/10 text-gray-400 hover:text-green-400 hover:border-green-500/50 hover:bg-green-500/10 transition-all duration-300 shadow-[0_0_15px_rgba(0,0,0,0.5)] hover:shadow-[0_0_20px_rgba(34,197,94,0.3)]"
-            animate={{ y: [0, -8, 0] }} // Floating animation
-            transition={{ duration: 4, delay: 1, repeat: Infinity, ease: "easeInOut" }} // Added delay so they don't move in exact sync
+            className="absolute top-6 right-6 p-3 rounded-full bg-white/5 border border-white/10 text-gray-400 hover:text-green-400 hover:border-green-500/50 hover:bg-green-500/10 transition-all duration-300 shadow-[0_0_15px_rgba(0,0,0,0.5)] hover:shadow-[0_0_20px_rgba(34,197,94,0.3)] z-30"
+            animate={{ y: [0, -8, 0] }}
+            transition={{ duration: 4, delay: 1, repeat: Infinity, ease: "easeInOut" }}
             whileHover={{ scale: 1.1 }}
           >
             <Github size={20} />
           </motion.a>
 
-          <h3 className="text-xl font-bold text-gray-200 mb-6 flex items-center gap-2 self-start md:self-center">
+          <h3 className="text-xl font-bold text-gray-200 mb-8 mt-2 flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"/> GitHub Activity
           </h3>
           
-          <div className="w-full flex justify-center scale-90 md:scale-100 origin-center">
+          <div className="w-full flex justify-center overflow-x-auto scale-95 md:scale-100 origin-center pb-4 scrollbar-hide">
             <GitHubCalendar 
               username="manavmerja" 
-              blockSize={13}
+              blockSize={12} 
               blockMargin={4}
-              fontSize={14}
+              fontSize={12}
               theme={{
                 light: ['#161b22', '#0e4429', '#006d32', '#26a641', '#39d353'],
                 dark: ['#1f2937', '#1e3a8a', '#3b82f6', '#60a5fa', '#93c5fd'],
@@ -171,12 +285,72 @@ export default function CodingStats() {
             />
           </div>
           
-          <p className="text-gray-500 text-xs mt-4 font-mono text-center">
+          <p className="text-gray-500 text-xs font-mono text-center">
             * Contribution graph for the last year
           </p>
         </div>
 
       </div>
+
+      {/* === BOTTOM: CUSTOM ANIMATED STREAK STATS === */}
+      <div className="max-w-6xl mx-auto px-4 mt-10 relative z-20">
+        <div className="p-6 md:p-8 rounded-3xl bg-black/40 border border-white/10 backdrop-blur-sm shadow-2xl">
+           
+           <h3 className="text-lg font-bold text-gray-200 mb-6 flex items-center justify-center gap-2 text-center">
+            <Zap className="text-blue-400 fill-blue-400/20" size={20} /> GitHub Live Stats
+          </h3>
+
+          {/* Grid Container for Stats */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 divide-y md:divide-y-0 md:divide-x divide-white/10">
+            
+            {/* 1. Total Contributions */}
+            <div className="flex flex-col items-center justify-center p-4">
+              <span className="text-4xl font-bold text-white mb-2">
+                <NumberTicker value={ghStats.total} />
+              </span>
+              <span className="text-[10px] text-gray-500 font-mono mt-1 mb-1">
+                 {ghStats.totalRange}
+              </span>
+              <span className="text-xs text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                <Calendar size={12} className="text-blue-400" />
+                Total Contributions
+              </span>
+            </div>
+
+            {/* 2. Current Streak */}
+            <div className="flex flex-col items-center justify-center p-4">
+              <span className="text-4xl font-bold text-white mb-2">
+                <NumberTicker value={ghStats.current} />
+              </span>
+              {/* ✅ Date Range Added */}
+              <span className="text-[10px] text-gray-500 font-mono mt-1 mb-1">
+                 {ghStats.currentRange}
+              </span>
+              <span className="text-xs text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                <Zap size={12} className="text-yellow-400" />
+                Current Streak
+              </span>
+            </div>
+
+            {/* 3. Longest Streak */}
+            <div className="flex flex-col items-center justify-center p-4">
+              <span className="text-4xl font-bold text-white mb-2">
+                <NumberTicker value={ghStats.longest} />
+              </span>
+               {/* ✅ Date Range Added */}
+              <span className="text-[10px] text-gray-500 font-mono mt-1 mb-1">
+                 {ghStats.longestRange}
+              </span>
+              <span className="text-xs text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                <Trophy size={12} className="text-purple-400" />
+                Longest Streak
+              </span>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
     </section>
   );
 }

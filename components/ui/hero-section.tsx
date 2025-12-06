@@ -1,6 +1,5 @@
 "use client";
 import React from "react";
-import { Meteors } from "@/components/ui/meteors";
 import { ContainerTextFlip } from "@/components/ui/container-text-flip";
 
 export default function HeroSection() {
@@ -13,10 +12,6 @@ export default function HeroSection() {
       {/* 1. Darker Overlay for better contrast */}
       <div className="absolute inset-0 bg-black/70 z-0" />
 
-      {/* 2. Meteors Effect */}
-      <div className="absolute inset-0 h-full w-full z-10 overflow-hidden pointer-events-none">
-        <Meteors number={25} /> 
-      </div>
 
       {/* 3. Main Content (Responsive Alignment) */}
       <div className="relative z-20 w-full h-full flex flex-col justify-end items-start pb-24 px-6 md:px-16">
