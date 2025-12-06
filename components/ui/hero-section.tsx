@@ -1,32 +1,33 @@
 "use client";
 import React from "react";
 import { ContainerTextFlip } from "@/components/ui/container-text-flip";
+import Starfield from "@/components/ui/starfield"; // ✅ Sahi Import
 
 export default function HeroSection() {
   return (
-    <section 
-      className="h-screen w-full relative overflow-hidden bg-cover bg-center bg-no-repeat"
-      style={{ backgroundImage: "url('/space-bg.png')" }} 
-    >
+    <section className="h-screen w-full relative overflow-hidden bg-black flex flex-col items-center justify-center">
       
-      {/* 1. Darker Overlay for better contrast */}
-      <div className="absolute inset-0 bg-black/70 z-0" />
+      {/* ✅ 1. WARP SPEED BACKGROUND */}
+      {/* Purani background image hata di hai */}
+      <Starfield 
+        starCount={1200} 
+        starColor="255, 255, 255"
+        speed={0.06} 
+      />
 
-
-      {/* 3. Main Content (Responsive Alignment) */}
-      <div className="relative z-20 w-full h-full flex flex-col justify-end items-start pb-24 px-6 md:px-16">
+      {/* 2. Main Content */}
+      <div className="relative z-20 w-full h-full flex flex-col justify-end items-start pb-24 px-6 md:px-16 pointer-events-none">
         
-        {/* Chhota Text */}
         <span className="text-cyan-400/80 text-sm md:text-xl font-mono tracking-[0.2em] mb-4 ml-1">
           HELLO, I AM A
         </span>
 
-        {/* 🔄 ANIMATED FLIP TEXT - Syntax Fixed ✅ */}
+        {/* Text Flip */}
         <ContainerTextFlip
           words={["FULL STACK DEV", "ML ENGINEER", "PROBLEM SOLVER"]}
-          interval={4000} // Slow Speed
-          animationDuration={1500} // Smooth Flip
-          className="!justify-start" // Force Left align
+          interval={3000} 
+          animationDuration={1000}
+          className="!justify-start pointer-events-auto" 
         />
         
       </div>
