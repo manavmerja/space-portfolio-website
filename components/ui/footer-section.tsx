@@ -60,6 +60,7 @@ export default function FooterSection() {
       title: "Resume",
       icon: <IconFileText className="h-full w-full text-yellow-400" />,
       href: "/resume.pdf",
+      target: "_blank",
     },
     {
       title: "Email",

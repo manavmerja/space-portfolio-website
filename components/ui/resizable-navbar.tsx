@@ -9,7 +9,7 @@ import {
 } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 
 // --- Types ---
 interface NavbarProps { children: React.ReactNode; className?: string; }
@@ -55,7 +55,7 @@ export const NavBody = ({ children, className, isScrolled }: NavBodyProps) => {
         "transition-all duration-300 ease-in-out transform-gpu",
         // Rounded corners always
         "rounded-full",
-        // State Changes (Only Colors/Shadows - No Width Change)
+        // State Changes
         isScrolled 
           ? "w-full max-w-5xl bg-black/80 backdrop-blur-md border border-white/10 shadow-2xl" 
           : "w-full max-w-7xl bg-transparent border border-transparent",
@@ -85,6 +85,9 @@ export const NavItems = ({ items, className, onItemClick }: NavItemsProps) => {
           className="relative px-4 py-2 text-gray-300 hover:text-white transition-colors"
           key={`link-${idx}`}
           href={item.link}
+          // ✅ FIX: Resume opens in new tab
+          target={item.name === "Resume" ? "_blank" : undefined}
+          rel={item.name === "Resume" ? "noopener noreferrer" : undefined}
         >
           {hovered === idx && (
             <motion.div
@@ -100,7 +103,7 @@ export const NavItems = ({ items, className, onItemClick }: NavItemsProps) => {
   );
 };
 
-// --- Helper Components (Same as before) ---
+// --- Helper Components ---
 
 export const NavbarLogo = () => {
   return (
