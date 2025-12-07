@@ -66,7 +66,7 @@ export default function JourneySection() {
   const opacityTransform = useTransform(scrollYProgress, [0, 0.1], [0, 1]);
 
   return (
-    <section id="journey" className="w-full py-20 bg-black relative overflow-hidden" ref={containerRef}>
+    <section id="journey" className="relative w-full py-20 bg-black relative overflow-hidden" ref={containerRef}>
       
       {/* ✅ NEW: DOT PATTERN BACKGROUND */}
       {/* Mask Image use kiya hai taaki dots edges par fade ho jayein */}
@@ -156,6 +156,7 @@ export default function JourneySection() {
                                 alt="Main Event"
                                 fill
                                 className="object-cover opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
+                                sizes="(max-width: 768px) 100vw, 500px" // ✅ Added sizes
                             />
                              <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-transparent transition-all">
                                 <span className="px-3 py-1 rounded-full bg-purple-600/90 text-white text-xs font-bold backdrop-blur-md shadow-lg border border-purple-400/50">
@@ -171,6 +172,7 @@ export default function JourneySection() {
                                     alt="Moment"
                                     fill
                                     className="object-cover opacity-70 group-hover:opacity-100 hover:scale-110 transition-all duration-300"
+                                    sizes="(max-width: 768px) 100vw, 500px" // ✅ Added sizes
                                 />
                            </div>
                         ))}

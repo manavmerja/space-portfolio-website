@@ -150,6 +150,7 @@ export default function FooterSection() {
                         alt="Manav Merja" 
                         fill 
                         className="object-contain invert p-1"
+                        sizes="40px" // ✅ FIX: Added exact size
                     />
                 </div>
                 <div className="flex flex-col">
