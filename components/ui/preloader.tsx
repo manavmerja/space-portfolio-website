@@ -10,6 +10,7 @@ export default function Preloader() {
   const [isUnlocked, setIsUnlocked] = useState(false);
 
   useEffect(() => {
+    // Scroll lock during loading
     if (loading) {
       document.body.style.overflow = "hidden";
     } else {

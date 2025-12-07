@@ -12,7 +12,7 @@ export default function HeroSection() {
       <Starfield 
         starCount={1200} 
         starColor="255, 255, 255"
-        speed={0.06} 
+        speed={0.05} 
       />
 
       {/* 2. Main Content */}

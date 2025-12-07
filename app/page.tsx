@@ -9,6 +9,7 @@ import JourneySection from "@/components/ui/journey-section";
 import FooterSection from "@/components/ui/footer-section";
 import Preloader from "@/components/ui/preloader";
 
+
 export default function Home() {
   return (
     <main className="bg-black min-h-screen w-full relative">
@@ -23,8 +24,9 @@ export default function Home() {
       <ProjectsSection />
       <CodingStats /> 
       <JourneySection />
-      <FloatingAssistant /> 
-      <FooterSection />     
+       <FloatingAssistant />  
+      <FooterSection />  
+       
     </main>
   );
 }

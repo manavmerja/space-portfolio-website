@@ -41,7 +41,8 @@ export default function ProjectsSection() {
                     src="/project-next-event.png" 
                     alt="Next Event Project"
                     fill
-                    className="object-cover hover:scale-110 transition-transform duration-500"
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
             </div>
             <div className="flex gap-3 mt-4 w-full">
