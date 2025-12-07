@@ -1,11 +1,13 @@
 "use client";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Fingerprint, Scan, Lock, LockOpen } from "lucide-react";
 
 export default function Preloader() {
   const [loading, setLoading] = useState(true);
-  const [progress, setProgress] = useState(0);
-  const [status, setStatus] = useState("INITIALIZING CORE...");
+  const [status, setStatus] = useState("SCANNING IDENTITY...");
+  const [scanColor, setScanColor] = useState("text-red-500"); // Red initially
+  const [isUnlocked, setIsUnlocked] = useState(false);
 
   useEffect(() => {
     if (loading) {
@@ -14,27 +16,25 @@ export default function Preloader() {
       document.body.style.overflow = "auto";
     }
 
-    // ✅ SLOWER PROGRESS LOGIC
-    // Interval ko 40ms se badhakar 80ms kar diya (Slow Loading)
-    const timer = setInterval(() => {
-      setProgress((prev) => {
-        // Increment bhi chhota kar diya (1 se 3 ke beech)
-        const next = prev + Math.floor(Math.random() * 3) + 1;
-        
-        if (next > 30 && next < 60) setStatus("LOADING NEURAL NETWORKS...");
-        if (next > 60 && next < 90) setStatus("VERIFYING BIOMETRICS...");
-        if (next > 90) setStatus("ACCESS GRANTED.");
+    // Sequence Logic
+    const sequence = async () => {
+      // Phase 1: Scanning (Red -> Cyan)
+      await new Promise((r) => setTimeout(r, 2000));
+      setStatus("VERIFYING BIOMETRICS...");
+      setScanColor("text-cyan-500");
 
-        if (next >= 100) {
-          clearInterval(timer);
-          setTimeout(() => setLoading(false), 1000); // 1 sec wait before opening
-          return 100;
-        }
-        return next;
-      });
-    }, 80); // <-- Yahan speed control hoti hai (Bada number = Slow speed)
+      // Phase 2: Processing
+      await new Promise((r) => setTimeout(r, 1500));
+      setStatus("ACCESS GRANTED: MANAV MERJA");
+      setScanColor("text-green-500");
+      setIsUnlocked(true);
 
-    return () => clearInterval(timer);
+      // Phase 3: Exit
+      await new Promise((r) => setTimeout(r, 1000));
+      setLoading(false);
+    };
+
+    sequence();
   }, [loading]);
 
   return (
@@ -43,70 +43,69 @@ export default function Preloader() {
         <motion.div
           className="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-black"
           
-          // ✅ SLOWER EXIT ANIMATION (Cinematic Fade)
+          // ✅ EXIT ANIMATION: Split/Fade Out
           exit={{ 
             opacity: 0, 
-            scale: 1.5, // Thoda kam zoom rakha hai taaki blur na phate
-            filter: "blur(15px)",
-            transition: { duration: 1.5, ease: "easeInOut" } // 1.5s transition
+            scale: 1.1, 
+            filter: "blur(10px)",
+            transition: { duration: 0.8, ease: "easeInOut" } 
           }}
         >
-          {/* --- HOLOGRAPHIC CORE CONTAINER --- */}
-          <div className="relative flex items-center justify-center mb-10 scale-150">
+          {/* --- SCANNER CONTAINER --- */}
+          <div className="relative w-64 h-64 border border-white/10 rounded-2xl flex items-center justify-center overflow-hidden bg-white/5 backdrop-blur-sm shadow-2xl">
             
-            {/* Outer Ring (Very Slow Reverse Spin) */}
-            <motion.div 
-                animate={{ rotate: -360 }}
-                transition={{ duration: 20, repeat: Infinity, ease: "linear" }} // ✅ 20s rotation
-                className="absolute w-40 h-40 border border-cyan-500/30 rounded-full border-t-cyan-500 border-r-transparent"
-            />
-            
-            {/* Middle Ring (Slow Spin) */}
-            <motion.div 
-                animate={{ rotate: 360 }}
-                transition={{ duration: 10, repeat: Infinity, ease: "linear" }} // ✅ 10s rotation
-                className="absolute w-28 h-28 border border-blue-500/30 rounded-full border-b-blue-400 border-l-transparent"
-            />
+            {/* Background Grid inside Scanner */}
+            <div className="absolute inset-0 bg-[linear-gradient(rgba(0,255,0,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(0,255,0,0.05)_1px,transparent_1px)] bg-[size:20px_20px]" />
 
-            {/* Inner Ring (Medium Spin) */}
-            <motion.div 
-                animate={{ rotate: -360 }}
-                transition={{ duration: 5, repeat: Infinity, ease: "linear" }} // ✅ 5s rotation
-                className="absolute w-16 h-16 border-2 border-white/10 rounded-full border-t-white border-l-transparent"
-            />
+            {/* FINGERPRINT ICON */}
+            <motion.div
+                initial={{ opacity: 0.5 }}
+                animate={{ opacity: isUnlocked ? 1 : 0.8 }}
+                className={`transition-colors duration-500 ${scanColor}`}
+            >
+                {isUnlocked ? (
+                    <LockOpen size={80} strokeWidth={1} />
+                ) : (
+                    <Fingerprint size={100} strokeWidth={1} />
+                )}
+            </motion.div>
 
-            {/* Center Core (Slow Pulsing) */}
-            <motion.div 
-                animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
-                transition={{ duration: 2, repeat: Infinity }} // ✅ 2s pulse
-                className="w-4 h-4 bg-cyan-400 rounded-full shadow-[0_0_20px_rgba(34,211,238,0.8)]"
-            />
-          </div>
-
-          {/* --- TEXT & PROGRESS --- */}
-          <div className="flex flex-col items-center gap-2 font-mono z-10">
-             <motion.p 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-cyan-500 text-xs tracking-[0.2em] animate-pulse"
-             >
-                {status}
-             </motion.p>
-             
-             <div className="h-1 w-48 bg-gray-800 rounded-full overflow-hidden mt-2 border border-white/10">
-                <motion.div 
-                    className="h-full bg-cyan-500 shadow-[0_0_10px_rgba(34,211,238,0.5)]"
-                    style={{ width: `${progress}%`, transition: "width 0.1s linear" }}
+            {/* --- LASER SCANNING LINE --- */}
+            {!isUnlocked && (
+                <motion.div
+                    initial={{ top: "0%" }}
+                    animate={{ top: "100%" }}
+                    transition={{ 
+                        duration: 1.5, 
+                        repeat: Infinity, 
+                        ease: "linear", 
+                        repeatType: "reverse" 
+                    }}
+                    className="absolute left-0 right-0 h-1 bg-cyan-500 shadow-[0_0_20px_rgba(34,211,238,0.8)] z-10"
                 />
-             </div>
-             
-             <p className="text-gray-500 text-[10px] mt-1">
-                SYSTEM INTEGRITY: <span className="text-white">{progress}%</span>
-             </p>
+            )}
+
+            {/* Corner Brackets (Tech Look) */}
+            <Scan className="absolute inset-0 w-full h-full text-white/20 p-2" strokeWidth={0.5} />
           </div>
 
-          {/* Background Grid */}
-          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none" />
+          {/* --- STATUS TEXT --- */}
+          <motion.div 
+            className="mt-8 flex flex-col items-center gap-2 font-mono"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+             <p className={`text-sm tracking-[0.2em] font-bold ${scanColor} transition-colors duration-300`}>
+                {status}
+             </p>
+             
+             {/* Fake Code Running */}
+             {!isUnlocked && (
+                 <p className="text-[10px] text-gray-600 animate-pulse">
+                    ENCRYPTION: SHA-256 // NODE: 42.1 // PORT: SECURE
+                 </p>
+             )}
+          </motion.div>
 
         </motion.div>
       )}
