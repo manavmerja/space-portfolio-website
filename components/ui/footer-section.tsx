@@ -109,7 +109,7 @@ export default function FooterSection() {
               method="POST" 
               className="space-y-4"
             >
-                <input type="hidden" name="access_key" value="YOUR_ACCESS_KEY_HERE" />
+                <input type="hidden" name="access_key" value="2e595453-e37e-4e29-ae52-c3a3f96b6d84" />
                 <input type="hidden" name="redirect" value="https://web3forms.com/success" />
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

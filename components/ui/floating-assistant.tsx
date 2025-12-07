@@ -164,7 +164,7 @@ export default function FloatingAssistant() {
                     <Image src="/ai-robot.png" alt="Nebula" fill className="object-cover" sizes="40px" />
                 </div>
                 <div>
-                    <h3 className="font-bold text-white tracking-wider font-space-grotesk text-lg">NEBULA</h3>
+                    <h3 className="font-bold text-white tracking-wider font-space-grotesk text-lg">NEBULA AI</h3>
                     <p className="text-[10px] text-cyan-400 font-mono flex items-center gap-1">
                         <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"/> ONLINE
                     </p>

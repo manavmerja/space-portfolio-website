@@ -35,7 +35,6 @@ const FloatingDockMobile = ({
   items: { title: string; icon: React.ReactNode; href: string }[];
   className?: string;
 }) => {
-  // ✅ Scroll Handler for Mobile
   const handleScrollTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -44,7 +43,8 @@ const FloatingDockMobile = ({
     <div className={cn("relative block md:hidden", className)}>
       <div className="flex gap-4 justify-center items-center p-4 bg-neutral-900 rounded-2xl border border-neutral-800">
           {items.map((item) => {
-             const isExternal = item.href.startsWith("http") || item.href.endsWith(".pdf");
+             // ✅ FIX: Added 'mailto' check
+             const isExternal = item.href.startsWith("http") || item.href.endsWith(".pdf") || item.href.startsWith("mailto:");
              const isHome = item.title === "Home";
              
              return (
@@ -52,9 +52,10 @@ const FloatingDockMobile = ({
                   key={item.title} 
                   href={item.href} 
                   className="text-white"
-                  target={isExternal ? "_blank" : "_self"} 
+                  // Mailto should not open in _blank usually, but works either way. 
+                  // Keeping logic simple:
+                  target={isExternal && !item.href.startsWith("mailto:") ? "_blank" : "_self"} 
                   rel={isExternal ? "noopener noreferrer" : undefined}
-                  // ✅ Force Scroll to Top if Home is clicked
                   onClick={isHome ? handleScrollTop : undefined}
                 >
                    <motion.div 
@@ -121,10 +122,10 @@ function IconContainer({
 
   const [hovered, setHovered] = useState(false);
 
-  const isExternal = href.startsWith("http") || href.endsWith(".pdf");
+  // ✅ FIX: Added 'mailto' check here as well
+  const isExternal = href.startsWith("http") || href.endsWith(".pdf") || href.startsWith("mailto:");
   const isHome = title === "Home";
 
-  // ✅ Scroll Handler for Desktop
   const handleScrollTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -132,9 +133,9 @@ function IconContainer({
   return (
     <Link 
       href={href} 
-      target={isExternal ? "_blank" : "_self"}
+      // Mailto should open in same tab (system handles it)
+      target={isExternal && !href.startsWith("mailto:") ? "_blank" : "_self"} 
       rel={isExternal ? "noopener noreferrer" : undefined}
-      // ✅ Force Scroll here too
       onClick={isHome ? handleScrollTop : undefined}
     >
       <motion.div
