@@ -8,15 +8,21 @@ import CodingStats from "@/components/ui/coding-stats";
 import JourneySection from "@/components/ui/journey-section";
 import FooterSection from "@/components/ui/footer-section";
 import Preloader from "@/components/ui/preloader";
+import SmoothScroll from "@/components/ui/smooth-scroll"; // ✅ Import
+ // import SpotlightCursor from "@/components/ui/spotlight-cursor";
 
 
 export default function Home() {
   return (
     <main className="bg-black min-h-screen w-full relative">
       
-      {/* ✅ Preloader ko sabse upar rakha */}
+      {/* ✅ UTILITIES (Logic Only) */}
       <Preloader />
+      <SmoothScroll />
 
+    {/* <SpotlightCursor /> */}
+
+      {/* ✅ VISIBLE SECTIONS */}
       <Navbar />
       <HeroSection />
       <AboutSection />
@@ -24,9 +30,8 @@ export default function Home() {
       <ProjectsSection />
       <CodingStats /> 
       <JourneySection />
-       <FloatingAssistant />  
-      <FooterSection />  
-       
+      <FloatingAssistant /> 
+      <FooterSection />     
     </main>
   );
 }
