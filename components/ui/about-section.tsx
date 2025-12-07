@@ -1,151 +1,157 @@
 "use client";
 import React, { useState } from "react";
-import { motion } from "framer-motion";
-import { Lock, Unlock, Cpu, Code, GraduationCap, Globe, Trophy, Github, Linkedin, Twitter } from "lucide-react";
-import { BackgroundBeams } from "@/components/ui/background-beams"; // ✅ Updated component
+import { motion, AnimatePresence } from "framer-motion";
+import { Unlock, Cpu, Code, GraduationCap, Globe, Trophy, Github, Linkedin, Twitter } from "lucide-react";
 
 export default function AboutSection() {
   const [isUnlocked, setIsUnlocked] = useState(false);
 
   return (
-    <section id="about" className="w-full py-32 relative flex items-center justify-center overflow-hidden bg-neutral-950">
+    // ✅ FIX 1: 'min-h-screen' taki section puri height le.
+    <section id="about" className="w-full min-h-screen relative flex items-center justify-center overflow-hidden bg-black">
       
-      {/* 1. ACETERNITY BEAMS (Moving Light Rays) */}
-      <BackgroundBeams className="opacity-100" />
+      {/* ================================================= */}
+      {/* 🎬 1. BACKGROUND VIDEO (FULL SCREEN FILLER)       */}
+      {/* ================================================= */}
+      <div className="absolute inset-0 z-0">
+         <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            // ✅ FIX 2: 'object-cover' video ko stretch karke gaps bhar dega
+            className="w-full h-full object-cover opacity-60" 
+         >
+            <source src="/encryption.webm" type="video/webm" />
+         </video>
+         
+         {/* Gradient Overlay (Taaki video black background me seamless blend ho) */}
+         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black" />
+         <div className="absolute inset-0 bg-black/40" /> {/* Thoda dark tint text ke liye */}
+      </div>
 
-      {/* 2. SPOTLIGHTS (Subtle Glows for Depth) */}
-      <div className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-purple-900/20 blur-[120px] rounded-full pointer-events-none z-0" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-cyan-900/20 blur-[120px] rounded-full pointer-events-none z-0" />
 
-      {/* 3. HOLOGRAPHIC CARD */}
-      <motion.div
-        animate={isUnlocked ? "hover" : "rest"}
-        onMouseEnter={() => setIsUnlocked(true)}
-        onMouseLeave={() => setIsUnlocked(false)}
-        onClick={() => setIsUnlocked(!isUnlocked)}
-        className="relative h-[550px] w-[90%] max-w-[800px] rounded-3xl bg-neutral-950/60 backdrop-blur-md border border-neutral-800 shadow-2xl overflow-hidden group cursor-pointer z-20"
-      >
+      {/* ================================================= */}
+      {/* 🔒 2. INTERACTIVE CONTENT (LOCK / PROFILE)        */}
+      {/* ================================================= */}
+      <div className="relative z-10 w-full max-w-4xl px-4">
         
-        {/* === LOCKED STATE === */}
-        <motion.div
-          variants={{
-            rest: { opacity: 1, filter: "blur(0px)", zIndex: 10 },
-            hover: { opacity: 0, filter: "blur(10px)", zIndex: 0 },
-          }}
-          transition={{ duration: 0.5 }}
-          className="absolute inset-0 flex flex-col items-center justify-center"
-        >
-          <div className="h-24 w-24 rounded-full border-2 border-cyan-900/50 flex items-center justify-center mb-6 relative bg-neutral-900/50">
-            <Lock className="text-cyan-500/50 h-10 w-10" />
-            <motion.div 
-              animate={{ rotate: 360 }}
-              transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-              className="absolute inset-0 rounded-full border-t-2 border-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.5)]"
-            />
-          </div>
-          
-          <h2 className="text-3xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-neutral-500 tracking-[0.1em] uppercase text-center">
-            User Profile
-          </h2>
-          <p className="text-cyan-500/70 mt-4 text-xs md:text-sm font-mono animate-pulse tracking-widest">
-            [ SYSTEM LOCKED: AUTHENTICATE ]
-          </p>
-        </motion.div>
-
-
-        {/* === UNLOCKED STATE (REVEAL) === */}
-        <motion.div
-          variants={{
-            rest: { opacity: 0, scale: 0.95, zIndex: 0 },
-            hover: { opacity: 1, scale: 1, zIndex: 20 },
-          }}
-          transition={{ duration: 0.4 }}
-          className="absolute inset-0 p-6 md:p-10 flex flex-col bg-gradient-to-br from-neutral-900 to-neutral-950"
-        >
-          {/* Header */}
-          <div className="flex justify-between items-start border-b border-white/10 pb-4 mb-4">
-            <div>
-              <h3 className="text-3xl font-bold text-white tracking-wide">MANAV MERJA</h3>
-              <p className="text-cyan-400 font-mono text-sm flex items-center gap-2">
-                <span className="inline-block w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                Status: Online & Coding
-              </p>
-            </div>
-            <Unlock className="text-purple-400 h-6 w-6" />
-          </div>
-
-          {/* Details Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 overflow-y-auto pr-2 custom-scrollbar">
+        <AnimatePresence mode="wait">
             
-            {/* Education */}
-            <div className="flex items-center gap-4 p-3 rounded-xl bg-white/5 border border-white/5 hover:border-purple-500/30 transition-colors">
-              <div className="p-2.5 bg-purple-500/20 rounded-lg"><GraduationCap className="text-purple-400 h-5 w-5" /></div>
-              <div>
-                <h4 className="text-gray-200 font-bold text-sm">Education</h4>
-                <p className="text-gray-500 text-xs">DEPSTAR, CHARUSAT (CE'28)</p>
-              </div>
-            </div>
+            {/* --- STATE A: LOCKED (Show Lock Icon) --- */}
+            {!isUnlocked ? (
+                <motion.div
+                    key="locked"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 1.1, filter: "blur(10px)" }}
+                    transition={{ duration: 0.5 }}
+                    onClick={() => setIsUnlocked(true)}
+                    className="flex flex-col items-center justify-center cursor-pointer py-20"
+                >
+                    <div className="relative mb-8 group">
+                        {/* Glow Effect */}
+                        <div className="absolute -inset-4 rounded-full bg-cyan-500/20 blur-2xl animate-pulse"></div>
+                        
+                        {/* Lock Circle */}
+                        <div className="relative h-28 w-28 bg-black/60 rounded-full flex items-center justify-center border border-white/20 backdrop-blur-md shadow-2xl group-hover:scale-110 transition-transform duration-500">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.8)]">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <h2 className="text-5xl md:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500 tracking-widest font-space-grotesk text-center">
+                    ENCRYPTION
+                    </h2>
+                    <p className="text-cyan-400 mt-4 font-mono text-sm tracking-[0.3em] animate-pulse uppercase">
+                    [ Tap to Decrypt User Data ]
+                    </p>
+                </motion.div>
+            ) : (
+                
+            /* --- STATE B: UNLOCKED (Show Profile Card) --- */
+                <motion.div
+                    key="unlocked"
+                    initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ duration: 0.5, ease: "circOut" }}
+                    className="w-full bg-black/80 border border-white/10 rounded-3xl p-6 md:p-10 backdrop-blur-xl shadow-2xl"
+                >
+                    {/* Header */}
+                    <div className="flex justify-between items-start border-b border-white/10 pb-6 mb-6">
+                        <div>
+                            <h3 className="text-3xl md:text-4xl font-bold text-white tracking-wide font-space-grotesk">MANAV MERJA</h3>
+                            <p className="text-cyan-400 font-mono text-xs md:text-sm flex items-center gap-2 mt-2">
+                                <span className="relative flex h-2 w-2">
+                                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                  <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                                </span>
+                                SYSTEM STATUS: ONLINE & CODING
+                            </p>
+                        </div>
+                        <button 
+                            onClick={(e) => { e.stopPropagation(); setIsUnlocked(false); }}
+                            className="p-3 bg-white/5 rounded-full border border-white/10 hover:bg-white/10 transition-colors group"
+                        >
+                            <Unlock className="text-purple-400 h-6 w-6 group-hover:text-purple-300" />
+                        </button>
+                    </div>
 
-            {/* Role */}
-            <div className="flex items-center gap-4 p-3 rounded-xl bg-white/5 border border-white/5 hover:border-cyan-500/30 transition-colors">
-              <div className="p-2.5 bg-cyan-500/20 rounded-lg"><Code className="text-cyan-400 h-5 w-5" /></div>
-              <div>
-                <h4 className="text-gray-200 font-bold text-sm">Role</h4>
-                <p className="text-gray-500 text-xs">Full Stack Web Developer</p>
-              </div>
-            </div>
+                    {/* Grid Content */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <InfoCard icon={<GraduationCap />} title="Education" value="DEPSTAR, CHARUSAT (CE'28)" color="purple" />
+                        <InfoCard icon={<Code />} title="Role" value="Full Stack Web Developer" color="cyan" />
+                        <InfoCard icon={<Cpu />} title="Specialized In" value="AI - ML & GenAI" color="pink" />
+                        <InfoCard icon={<Trophy />} title="Achievement" value="Heisenberg Team (Top 10 @ AIT)" color="yellow" />
+                        <InfoCard icon={<Globe />} title="Target" value="Innovating with Code & AI" color="green" />
+                        
+                        {/* Connect Card */}
+                        <div className="flex items-center justify-between gap-2 p-4 rounded-xl bg-white/5 border border-white/5">
+                            <span className="text-gray-400 text-sm font-bold ml-1">Connect:</span>
+                            <div className="flex gap-2">
+                                <SocialLink href="https://github.com/manavmerja" icon={<Github size={18} />} />
+                                <SocialLink href="https://linkedin.com/in/merja-manav-124ba7317/" icon={<Linkedin size={18} />} />
+                                <SocialLink href="https://twitter.com/manavmerja" icon={<Twitter size={18} />} />
+                            </div>
+                        </div>
+                    </div>
+                </motion.div>
+            )}
+        </AnimatePresence>
 
-            {/* Specialization */}
-            <div className="flex items-center gap-4 p-3 rounded-xl bg-white/5 border border-white/5 hover:border-pink-500/30 transition-colors">
-              <div className="p-2.5 bg-pink-500/20 rounded-lg"><Cpu className="text-pink-400 h-5 w-5" /></div>
-              <div>
-                <h4 className="text-gray-200 font-bold text-sm">Specialized In</h4>
-                <p className="text-gray-500 text-xs">AI - ML</p>
-              </div>
-            </div>
-
-            {/* Achievements */}
-            <div className="flex items-center gap-4 p-3 rounded-xl bg-white/5 border border-white/5 hover:border-yellow-500/30 transition-colors">
-              <div className="p-2.5 bg-yellow-500/20 rounded-lg"><Trophy className="text-yellow-400 h-5 w-5" /></div>
-              <div>
-                <h4 className="text-gray-200 font-bold text-sm">Achievement</h4>
-                <p className="text-gray-500 text-xs">Heisenberg Team (Top 10 @ AIT)</p>
-              </div>
-            </div>
-
-            {/* Target */}
-            <div className="flex items-center gap-4 p-3 rounded-xl bg-white/5 border border-white/5 hover:border-green-500/30 transition-colors">
-              <div className="p-2.5 bg-green-500/20 rounded-lg"><Globe className="text-green-400 h-5 w-5" /></div>
-              <div>
-                <h4 className="text-gray-200 font-bold text-sm">Target</h4>
-                <p className="text-gray-500 text-xs">Innovating with Code & AI</p>
-              </div>
-            </div>
-
-            {/* Socials */}
-            <div className="flex items-center justify-between gap-2 p-3 rounded-xl bg-white/5 border border-white/5">
-               <span className="text-gray-400 text-sm font-bold ml-1">Connect:</span>
-               <div className="flex gap-2">
-                 <a href="https://github.com/manavmerja" target="_blank" className="p-2 bg-black rounded-lg hover:text-white text-gray-400 transition-colors border border-white/10"><Github size={16} /></a>
-                 <a href="#" className="p-2 bg-blue-900/30 rounded-lg hover:text-blue-400 text-gray-400 transition-colors border border-white/10"><Linkedin size={16} /></a>
-                 <a href="#" className="p-2 bg-black rounded-lg hover:text-white text-gray-400 transition-colors border border-white/10"><Twitter size={16} /></a>
-               </div>
-            </div>
-
-          </div>
-          
-        </motion.div>
-
-        {/* 3. NEON BORDER GLOW (Hover Only) */}
-        <motion.div
-          variants={{
-            rest: { opacity: 0 },
-            hover: { opacity: 1 },
-          }}
-          className="absolute inset-0 border border-cyan-500/30 rounded-3xl pointer-events-none shadow-[0_0_20px_rgba(6,182,212,0.15)_inset]"
-        />
-
-      </motion.div>
+      </div>
     </section>
   );
 }
+
+// --- Helper Components for Clean Code ---
+const InfoCard = ({ icon, title, value, color }: any) => {
+    const colors: any = {
+        purple: "text-purple-400 bg-purple-500/20 border-purple-500/20",
+        cyan: "text-cyan-400 bg-cyan-500/20 border-cyan-500/20",
+        pink: "text-pink-400 bg-pink-500/20 border-pink-500/20",
+        yellow: "text-yellow-400 bg-yellow-500/20 border-yellow-500/20",
+        green: "text-green-400 bg-green-500/20 border-green-500/20",
+    };
+    
+    return (
+        <div className={`flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-white/5 hover:border-${color}-500/30 transition-all hover:bg-white/10 group`}>
+            <div className={`p-3 rounded-lg ${colors[color]}`}>
+                {React.cloneElement(icon, { className: `h-5 w-5 ${colors[color].split(" ")[0]}` })}
+            </div>
+            <div>
+                <h4 className="text-gray-300 font-bold text-sm">{title}</h4>
+                <p className="text-gray-500 text-xs group-hover:text-gray-300 transition-colors">{value}</p>
+            </div>
+        </div>
+    )
+}
+
+const SocialLink = ({ href, icon }: any) => (
+    <a href={href} target="_blank" className="p-2 bg-black rounded-lg hover:text-white text-gray-400 transition-colors border border-white/10 hover:border-white/30">
+        {icon}
+    </a>
+)
