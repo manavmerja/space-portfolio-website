@@ -1,7 +1,8 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
+import Image from "next/image"; // ✅ Import Image
 import { motion, AnimatePresence } from "framer-motion";
-import { Bot, Send, X, User, Sparkles, FileText, Download, MessageSquare } from "lucide-react";
+import { Bot, Send, X, User, Sparkles, Download } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Message {
@@ -17,7 +18,7 @@ export default function FloatingAssistant() {
     { role: "ai", text: "System Online. 🌌 I am Nebula. How can I assist you in navigating Manav's universe?" }
   ]);
   const [isLoading, setIsLoading] = useState(false);
-  const [showTooltip, setShowTooltip] = useState(false); // ✅ New State for Tooltip
+  const [showTooltip, setShowTooltip] = useState(false); 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Auto-scroll
@@ -25,7 +26,7 @@ export default function FloatingAssistant() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isOpen]);
 
-  // ✅ Show "System Online" tooltip after 2 seconds
+  // Show tooltip after 2 seconds
   useEffect(() => {
     const timer = setTimeout(() => setShowTooltip(true), 2000);
     return () => clearTimeout(timer);
@@ -104,16 +105,38 @@ export default function FloatingAssistant() {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             onClick={() => { setIsOpen(true); setShowTooltip(false); }}
-            className="fixed bottom-6 right-6 z-[9990] w-16 h-16 rounded-full bg-gradient-to-tr from-cyan-600 to-blue-700 text-white flex items-center justify-center shadow-[0_0_30px_rgba(34,211,238,0.6)] border-2 border-white/20 group"
+            // ✅ REMOVED GRADIENT BACKGROUND & BORDER
+            className="fixed bottom-6 right-6 z-[9990] w-16 h-16 flex items-center justify-center group"
             >
-            {/* Inner Icon */}
-            <Bot size={32} className="group-hover:animate-wiggle" />
             
-            {/* Pulsing Outer Ring */}
-            <div className="absolute inset-0 rounded-full border border-white/50 animate-ping opacity-30 duration-1000" />
+            {/* ✅ NEW ROBOT IMAGE ICON */}
+            <div className="relative w-full h-full">
+                 <Image 
+                    src="/ai-robot.png" // Ensure image is in public folder
+                    alt="AI Assistant"
+                    fill
+                    // ✅ FIX 1: Sizes bataya (taaki browser heavy image load na kare)
+                    sizes="64px"
+                    // ✅ FIX 2: Priority add kiya (taaki ye turant load ho)
+                    priority
+                    className="object-contain drop-shadow-[0_0_15px_rgba(34,211,238,0.6)] group-hover:scale-110 transition-transform duration-300"
+                 />
+                 
+                 {/* Chhota Sparkle jo orbit karega */}
+                 <motion.div 
+                   animate={{ rotate: 360 }}
+                   transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                   className="absolute -top-1 -right-1 z-10"
+                 >
+                    <Sparkles size={12} className="text-yellow-300 filter drop-shadow-[0_0_5px_rgba(234,179,8,0.8)]" />
+                 </motion.div>
+            </div>
+            
+            {/* Pulsing Outer Ring (Thoda sa glow rakha hai) */}
+            <div className="absolute inset-0 rounded-full bg-cyan-500/20 animate-ping opacity-30 duration-1000 z-0" />
             
             {/* Notification Dot */}
-            <span className="absolute top-0 right-0 w-4 h-4 bg-red-500 rounded-full border-2 border-black flex items-center justify-center text-[10px] font-bold">1</span>
+            <span className="absolute top-0 right-0 w-4 h-4 bg-red-500 rounded-full border-2 border-black flex items-center justify-center text-[10px] font-bold z-20">1</span>
             </motion.button>
         )}
       </AnimatePresence>
@@ -122,23 +145,23 @@ export default function FloatingAssistant() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
+            // ... (Chat interface code remains same as before) ...
             initial={{ opacity: 0, y: 100, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 100, scale: 0.9 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
             className={cn(
               "fixed z-[10000] bg-black/80 backdrop-blur-xl border border-cyan-500/30 shadow-2xl overflow-hidden flex flex-col",
-              // Mobile: Full Screen, Desktop: Bottom Right Box
               "inset-0 md:inset-auto md:bottom-24 md:right-6 md:w-[400px] md:h-[600px] md:rounded-3xl",
-              "shadow-[0_0_50px_rgba(8,145,178,0.3)]" // Outer Glow
+              "shadow-[0_0_50px_rgba(8,145,178,0.3)]"
             )}
           >
-            
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-white/10 bg-gradient-to-r from-cyan-900/40 to-transparent">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg">
-                    <Bot size={20} className="text-white" />
+                <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg overflow-hidden relative">
+                    {/* ✅ Header mein bhi chhota image laga diya */}
+                    <Image src="/ai-robot.png" alt="Nebula" fill className="object-cover" sizes="40px" />
                 </div>
                 <div>
                     <h3 className="font-bold text-white tracking-wider font-space-grotesk text-lg">NEBULA</h3>
@@ -152,7 +175,7 @@ export default function FloatingAssistant() {
               </button>
             </div>
 
-            {/* Messages Area */}
+            {/* Messages Area (Same as before) */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-cyan-900/50 scrollbar-track-transparent">
               {messages.map((msg, idx) => (
                 <motion.div
@@ -164,11 +187,17 @@ export default function FloatingAssistant() {
                     msg.role === "user" ? "ml-auto flex-row-reverse" : "mr-auto"
                   )}
                 >
+                  {/* Chat bubble icon (User/AI) */}
                   <div className={cn(
-                    "w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1 shadow-lg",
-                    msg.role === "ai" ? "bg-cyan-900/50 text-cyan-400 border border-cyan-500/30" : "bg-white/10 text-white"
+                    "w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1 shadow-lg overflow-hidden relative",
+                    msg.role === "ai" ? "bg-cyan-900/50 border border-cyan-500/30" : "bg-white/10 text-white"
                   )}>
-                    {msg.role === "ai" ? <Sparkles size={14} /> : <User size={14} />}
+                    {msg.role === "ai" ? (
+                         // ✅ Chat ke andar bhi chhota image
+                        <Image src="/ai-robot.png" alt="AI" fill className="object-cover" sizes="32px" />
+                    ) : ( 
+                        <User size={14} />
+                    )}
                   </div>
 
                   <div className="flex flex-col gap-2">
@@ -181,7 +210,6 @@ export default function FloatingAssistant() {
                         {msg.text}
                       </div>
 
-                      {/* Resume Button */}
                       {msg.hasResume && (
                           <motion.a 
                             initial={{ scale: 0.9, opacity: 0 }}
@@ -205,9 +233,8 @@ export default function FloatingAssistant() {
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Input Area */}
+            {/* Input Area (Same as before) */}
             <div className="p-4 border-t border-white/10 bg-black/60 backdrop-blur-md">
-               {/* Suggestion Chips */}
                <div className="flex gap-2 overflow-x-auto pb-3 scrollbar-hide mask-image-gradient">
                   {suggestions.map((s) => (
                     <button 

@@ -73,6 +73,7 @@ export default function ProjectsSection() {
                     alt="Niti AI Project"
                     fill
                     className="object-cover hover:scale-110 transition-transform duration-500"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
             </div>
             <div className="flex gap-3 mt-4 w-full">
@@ -103,6 +104,7 @@ export default function ProjectsSection() {
                     alt="Waste Warrior Project"
                     fill
                     className="object-cover hover:scale-110 transition-transform duration-500"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
             </div>
             <div className="flex gap-3 mt-4 w-full">
