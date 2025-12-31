@@ -18,6 +18,7 @@ const journeyData = [
     border: "border-yellow-500/50",
     align: "left",
   },
+
   {
     phase: "PHASE 2: THE STRUGGLE",
     movieTitle: "The Martian", 
@@ -54,6 +55,8 @@ const journeyData = [
     align: "right",
   },
 ];
+
+
 
 export default function JourneySection() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -187,3 +190,5 @@ export default function JourneySection() {
     </section>
   );
 }
+
+
