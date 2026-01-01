@@ -11,6 +11,8 @@ import Link from "next/link";
 import Image from "next/image";
 import React, { useState } from "react";
 
+
+
 // --- Types ---
 interface NavbarProps { children: React.ReactNode; className?: string; }
 interface NavBodyProps { children: React.ReactNode; className?: string; isScrolled?: boolean; }
@@ -30,6 +32,8 @@ export const Navbar = ({ children, className }: NavbarProps) => {
     }
   });
 
+
+  
   return (
     <div
       className={cn("fixed inset-x-0 top-4 z-50 w-full px-4 flex justify-center pointer-events-none", className)}
