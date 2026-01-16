@@ -9,7 +9,8 @@ import JourneySection from "@/components/ui/journey-section";
 import FooterSection from "@/components/ui/footer-section";
 import Preloader from "@/components/ui/preloader";
 import SmoothScroll from "@/components/ui/smooth-scroll"; // ✅ Import
- // import SpotlightCursor from "@/components/ui/spotlight-cursor";
+// import SpotlightCursor from "@/components/ui/spotlight-cursor";
+ 
 
 
 export default function Home() {
@@ -31,7 +32,8 @@ export default function Home() {
       <CodingStats /> 
       <JourneySection />
       <FloatingAssistant /> 
-      <FooterSection />     
+      <FooterSection /> 
+          
     </main>
   );
 }

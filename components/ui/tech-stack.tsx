@@ -6,11 +6,20 @@ import { IconCloud } from "@/components/ui/icon-cloud";
 import { LightRays } from "@/components/ui/light-rays"; 
 
 const slugs = [
+  // Core / Web
   "typescript", "javascript", "react", "html5", "css", 
-  "nodedotjs", "nextdotjs", "prisma", "postgresql", "firebase", 
-  "nginx", "vercel", "tailwindcss", "docker", "git", "github", 
-  "linux", "python", "tensorflow", "pytorch", "scikitlearn", 
-  "pandas", "numpy", "jupyter", "openai", "googlecloud"
+  "nodedotjs", "nextdotjs", "nginx", "vercel", 
+  "tailwindcss", "docker", "git", "github", 
+  
+  // Databases (New Additions Included) 🗄️
+  "postgresql","supabase", "mongodb", "mysql", "php",
+
+  // AI / ML / Data Science (New Additions Included) 🤖
+  "python", "tensorflow", "scikit-learn", "pandas", "numpy", 
+  "jupyter", "matplotlib", "seaborn", "langchain", "huggingface",
+
+  // Cloud (New Additions Included) ☁️
+  "googlecloud", "amazonwebservices" // AWS
 ];
 
 export default function TechStack() {
@@ -19,7 +28,7 @@ export default function TechStack() {
       
       {/* ✅ LIGHT RAYS (Volumetric Effect) */}
       <LightRays 
-        rayColor="255, 255, 255" // TESTING: White light
+        rayColor="255, 255, 255"
         className="opacity-50" 
       />
 
