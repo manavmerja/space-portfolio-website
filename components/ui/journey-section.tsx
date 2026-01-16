@@ -44,11 +44,12 @@ const journeyData = [
        "/hackathon-3.jpg", 
     ]
   },
-  {
+ {
     phase: "PHASE 4: INTERSTELLAR",
     movieTitle: "Interstellar", 
     date: "Present",
-    desc: "Exploring deep tech. Mastered MERN Stack and now training AI/ML models. Building 'Waste Warrior' and preparing for the next big jump: GSoC 2026.",
+    // ✅ Updated Description: Cloud & University Projects added
+    desc: "Exploring deep tech. Mastered AI/ML models. Currently diving into Cloud Computing architectures and working on innovative University projects.",
     icon: <Rocket size={20} className="text-cyan-400" />,
     color: "from-cyan-500/20 to-blue-500/5",
     border: "border-cyan-500/50",

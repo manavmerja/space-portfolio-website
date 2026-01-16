@@ -17,6 +17,8 @@ export default function FooterSection() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [resultMessage, setResultMessage] = useState("");
 
+  const currentYear = new Date().getFullYear();
+
   useEffect(() => {
     const updateCount = async () => {
       try {
@@ -188,8 +190,8 @@ export default function FooterSection() {
                     <Image src="/logo.png" alt="Manav Merja" fill className="object-contain invert p-1" sizes="40px" />
                 </div>
                 <div className="flex flex-col">
-                    <p className="tracking-widest text-gray-400">© 2025 MANAV MERJA</p>
-                    <p className="text-[10px] text-gray-600">SYSTEM STATUS: ONLINE</p>
+                    <p className="tracking-widest text-gray-400">© {currentYear} MANAV MERJA</p>
+                    <p className="text-[10px] text-gray-600">SYSTEM STATUS: ONLINE 🟢</p>
                 </div>
             </div>
 

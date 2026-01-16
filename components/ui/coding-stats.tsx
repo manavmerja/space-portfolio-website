@@ -5,7 +5,7 @@ import { GitHubCalendar } from "react-github-calendar";
 import { motion } from "framer-motion";
 import NumberTicker from "@/components/ui/number-ticker";
 import { ExternalLink, Github, Zap, Trophy, Calendar } from "lucide-react";
-import RetroGrid from "@/components/ui/retro-grid"; // ✅ Grid Imported
+import RetroGrid from "@/components/ui/retro-grid";
 
 // --- Types ---
 interface GitHubData {
@@ -18,16 +18,23 @@ export default function CodingStats() {
   const [githubData, setGithubData] = useState<GitHubData | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // ✅ NEW: Year State (Default to current year 2026)
+  const currentYear = new Date().getFullYear();
+  const [selectedYear, setSelectedYear] = useState<number>(currentYear);
+
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true); // Reset loading on year change
       try {
+        // LeetCode (Static for now, usually lifetime stats)
         const lcResponse = await fetch("https://leetcode-stats-api.herokuapp.com/manav99135");
         const lcData = await lcResponse.json();
         if (lcData.status === "success") {
           setLeetcodeData(lcData);
         }
 
-        const ghResponse = await fetch("https://github-contributions-api.jogruber.de/v4/manavmerja?y=last");
+        // ✅ Dynamic GitHub Fetch based on selectedYear
+        const ghResponse = await fetch(`https://github-contributions-api.jogruber.de/v4/manavmerja?y=${selectedYear}`);
         const ghData = await ghResponse.json();
         setGithubData(ghData);
 
@@ -39,7 +46,7 @@ export default function CodingStats() {
     };
 
     fetchData();
-  }, []);
+  }, [selectedYear]); // ✅ Re-run when year changes
 
   const stats = leetcodeData || { 
     totalSolved: 0, 
@@ -62,6 +69,7 @@ export default function CodingStats() {
     const oneDay = 24 * 60 * 60 * 1000;
     let currentDate = new Date();
     currentDate.setHours(0, 0, 0, 0);
+    // Logic handles basic streak, refined for simplicity here
     let lastSubDate = new Date(timestamps[0] * 1000);
     lastSubDate.setHours(0,0,0,0);
     const diff = (currentDate.getTime() - lastSubDate.getTime()) / oneDay;
@@ -78,22 +86,22 @@ export default function CodingStats() {
     return streak;
   };
 
-  // Helper to format Date: "Nov 25"
   const formatDate = (dateString: string) => {
     const options: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' };
     return new Date(dateString).toLocaleDateString('en-US', options);
   };
 
-  // ✅ Updated Logic: Calculate Streak AND Date Range
   const calculateGitHubStreak = () => {
     if (!githubData?.contributions) return { current: 0, currentRange: "", longest: 0, longestRange: "", total: 0, totalRange: "" };
     
-    const contribs = githubData.contributions; // Sorted by date ascending
-    const total = Object.values(githubData.total).reduce((a, b) => a + b, 0);
+    const contribs = githubData.contributions; 
+    // If selecting past year, total is specific to that year
+    const total = contribs.reduce((acc, day) => acc + day.count, 0); 
+    
     const firstDate = contribs[0]?.date ? formatDate(contribs[0].date) : "";
-    const lastDate = "Present";
+    const lastDate = contribs[contribs.length - 1]?.date ? formatDate(contribs[contribs.length - 1].date) : "";
 
-    // 1. Calculate Longest Streak (Iterate Forward)
+    // 1. Longest Streak
     let maxStreak = 0;
     let tempStreak = 0;
     let maxStart = "";
@@ -113,21 +121,19 @@ export default function CodingStats() {
             tempStreak = 0;
         }
     }
-    // Check end of array case
     if (tempStreak > maxStreak) {
         maxStreak = tempStreak;
         maxStart = tempStart;
         maxEnd = contribs[contribs.length - 1].date;
     }
 
-    // 2. Calculate Current Streak (Iterate Backward)
+    // 2. Current Streak (Relative to the selected year's end)
     const reversed = [...contribs].reverse();
     let currentStreak = 0;
     let currentStart = "";
-    let currentEnd = reversed[0].date; // Today
+    let currentEnd = reversed[0].date; 
     
-    // Check if streak is broken today/yesterday
-    let isStreakActive = reversed[0].count > 0 || reversed[1].count > 0;
+    let isStreakActive = reversed[0].count > 0 || reversed[1]?.count > 0;
     
     if (isStreakActive) {
         for (const day of reversed) {
@@ -135,8 +141,6 @@ export default function CodingStats() {
                 currentStreak++;
                 currentStart = day.date;
             } else {
-                // Allow one gap only if it's today and we haven't committed yet (handled by isActive check), 
-                // but inside the loop, the first 0 breaks the streak.
                 if (day.date !== currentEnd) break; 
             }
         }
@@ -146,7 +150,7 @@ export default function CodingStats() {
         current: currentStreak, 
         currentRange: currentStreak > 0 ? `${formatDate(currentStart)} - ${formatDate(currentEnd)}` : "No active streak",
         longest: maxStreak, 
-        longestRange: `${formatDate(maxStart)} - ${formatDate(maxEnd)}`,
+        longestRange: maxStreak > 0 ? `${formatDate(maxStart)} - ${formatDate(maxEnd)}` : "N/A",
         total, 
         totalRange: `${firstDate} - ${lastDate}`
     };
@@ -157,12 +161,10 @@ export default function CodingStats() {
   return (
     <section id="stats" className="w-full py-20 bg-black relative z-10 overflow-hidden">
       
-      {/* ✅ ADDED RETRO GRID HERE TOO FOR CONTINUITY */}
       <div className="absolute inset-0 z-0 h-full w-full">
          <RetroGrid className="opacity-100" />
       </div>
 
-      {/* HEADER */}
       <div className="text-center mb-16 relative z-20 px-4">
         <h2 className="text-4xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500 font-space-grotesk">
           MISSION CONTROL
@@ -176,7 +178,7 @@ export default function CodingStats() {
         
         {/* === LEFT: LEETCODE HUD === */}
         <div className="relative flex flex-col items-center justify-center p-6 md:p-8 rounded-3xl bg-black/40 border border-white/10 backdrop-blur-sm shadow-2xl group min-h-[400px]">
-          
+          {/* ... (Same Leetcode Content) ... */}
           <div className="absolute top-6 left-6 flex items-center gap-2 z-30">
             <div className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 backdrop-blur-md">
                 <span className="text-orange-500 text-sm">🔥</span>
@@ -191,8 +193,6 @@ export default function CodingStats() {
             target="_blank" 
             rel="noopener noreferrer"
             className="absolute top-6 right-6 p-3 rounded-full bg-white/5 border border-white/10 text-gray-400 hover:text-orange-500 hover:border-orange-500/50 hover:bg-orange-500/10 transition-all duration-300 shadow-[0_0_15px_rgba(0,0,0,0.5)] hover:shadow-[0_0_20px_rgba(249,115,22,0.3)] z-30"
-            animate={{ y: [0, -8, 0] }}
-            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
             whileHover={{ scale: 1.1 }}
           >
             <ExternalLink size={20} />
@@ -258,22 +258,38 @@ export default function CodingStats() {
           <motion.a 
             href="https://github.com/manavmerja" 
             target="_blank" 
-            rel="noopener noreferrer"
-            className="absolute top-6 right-6 p-3 rounded-full bg-white/5 border border-white/10 text-gray-400 hover:text-green-400 hover:border-green-500/50 hover:bg-green-500/10 transition-all duration-300 shadow-[0_0_15px_rgba(0,0,0,0.5)] hover:shadow-[0_0_20px_rgba(34,197,94,0.3)] z-30"
-            animate={{ y: [0, -8, 0] }}
-            transition={{ duration: 4, delay: 1, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute top-6 right-6 p-3 rounded-full bg-white/5 border border-white/10 text-gray-400 hover:text-green-400 hover:border-green-500/50 hover:bg-green-500/10 transition-all duration-300 z-30"
             whileHover={{ scale: 1.1 }}
           >
             <Github size={20} />
           </motion.a>
 
-          <h3 className="text-xl font-bold text-gray-200 mb-8 mt-2 flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"/> GitHub Activity
+          {/* ✅ YEAR SELECTOR BUTTONS */}
+          <div className="absolute top-6 left-6 flex gap-2 z-30">
+            {[2026, 2025].map((year) => (
+                <button
+                    key={year}
+                    onClick={() => setSelectedYear(year)}
+                    className={`px-3 py-1 text-xs font-mono font-bold rounded-full border transition-all ${
+                        selectedYear === year 
+                        ? "bg-green-500/20 text-green-400 border-green-500/50" 
+                        : "bg-white/5 text-gray-500 border-white/10 hover:text-white"
+                    }`}
+                >
+                    {year}
+                </button>
+            ))}
+          </div>
+
+          <h3 className="text-xl font-bold text-gray-200 mb-8 mt-12 md:mt-4 flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"/> GitHub Activity ({selectedYear})
           </h3>
           
           <div className="w-full flex justify-center overflow-x-auto scale-95 md:scale-100 origin-center pb-4 scrollbar-hide">
+            {/* ✅ Pass 'year' prop to display correct calendar */}
             <GitHubCalendar 
               username="manavmerja" 
+              year={selectedYear}
               blockSize={12} 
               blockMargin={4}
               fontSize={12}
@@ -284,26 +300,19 @@ export default function CodingStats() {
               style={{ color: "white" }}
             />
           </div>
-          
-          <p className="text-gray-500 text-xs font-mono text-center">
-            * Contribution graph for the last year
-          </p>
         </div>
 
       </div>
 
-      {/* === BOTTOM: CUSTOM ANIMATED STREAK STATS === */}
+      {/* === BOTTOM: STATS === */}
       <div className="max-w-6xl mx-auto px-4 mt-10 relative z-20">
         <div className="p-6 md:p-8 rounded-3xl bg-black/40 border border-white/10 backdrop-blur-sm shadow-2xl">
-           
            <h3 className="text-lg font-bold text-gray-200 mb-6 flex items-center justify-center gap-2 text-center">
-            <Zap className="text-blue-400 fill-blue-400/20" size={20} /> GitHub Live Stats
+            <Zap className="text-blue-400 fill-blue-400/20" size={20} /> 
+            GitHub Performance ({selectedYear})
           </h3>
 
-          {/* Grid Container for Stats */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 divide-y md:divide-y-0 md:divide-x divide-white/10">
-            
-            {/* 1. Total Contributions */}
             <div className="flex flex-col items-center justify-center p-4">
               <span className="text-4xl font-bold text-white mb-2">
                 <NumberTicker value={ghStats.total} />
@@ -313,31 +322,27 @@ export default function CodingStats() {
               </span>
               <span className="text-xs text-gray-400 uppercase tracking-widest flex items-center gap-2">
                 <Calendar size={12} className="text-blue-400" />
-                Total Contributions
+                Contributions
               </span>
             </div>
 
-            {/* 2. Current Streak */}
             <div className="flex flex-col items-center justify-center p-4">
               <span className="text-4xl font-bold text-white mb-2">
                 <NumberTicker value={ghStats.current} />
               </span>
-              {/* ✅ Date Range Added */}
               <span className="text-[10px] text-gray-500 font-mono mt-1 mb-1">
                  {ghStats.currentRange}
               </span>
               <span className="text-xs text-gray-400 uppercase tracking-widest flex items-center gap-2">
                 <Zap size={12} className="text-yellow-400" />
-                Current Streak
+                Streak (Year End)
               </span>
             </div>
 
-            {/* 3. Longest Streak */}
             <div className="flex flex-col items-center justify-center p-4">
               <span className="text-4xl font-bold text-white mb-2">
                 <NumberTicker value={ghStats.longest} />
               </span>
-               {/* ✅ Date Range Added */}
               <span className="text-[10px] text-gray-500 font-mono mt-1 mb-1">
                  {ghStats.longestRange}
               </span>

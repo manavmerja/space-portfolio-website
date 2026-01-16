@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import Link from "next/link";
 import {
   Navbar as NavbarLayout,
   NavBody,
@@ -49,15 +50,15 @@ export default function Navbar() {
         </MobileNavHeader>
         <MobileNavMenu isOpen={isOpen} onClose={() => setIsOpen(false)}>
           {navItems.map((item, idx) => (
-            <a
+           <Link
               key={idx}
               href={item.link}
-              target={item.name === "Resume" ? "_blank" : "_self"}
-              onClick={() => setIsOpen(false)}
+              target={item.name === "Resume" ? "_blank" : undefined} // Resume in new tab
+              onClick={() => setIsOpen(false)} // Close menu on click
               className="block w-full px-4 py-2 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
             >
               {item.name}
-            </a>
+            </Link>
           ))}
           <NavbarButton href="#contact" className="w-full mt-4">
             Contact Me
