@@ -8,7 +8,8 @@ import CodingStats from "@/components/ui/coding-stats";
 import JourneySection from "@/components/ui/journey-section";
 import FooterSection from "@/components/ui/footer-section";
 import Preloader from "@/components/ui/preloader";
-import SmoothScroll from "@/components/ui/smooth-scroll"; // ✅ Import
+import SmoothScroll from "@/components/ui/smooth-scroll"; 
+import FeedbackPopup from "@/components/ui/feedback-popup";
 // import SpotlightCursor from "@/components/ui/spotlight-cursor";
  
 
@@ -20,7 +21,7 @@ export default function Home() {
       {/* ✅ UTILITIES (Logic Only) */}
       <Preloader />
       <SmoothScroll />
-
+      <FeedbackPopup />
     {/* <SpotlightCursor /> */}
 
       {/* ✅ VISIBLE SECTIONS */}

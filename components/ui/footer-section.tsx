@@ -5,14 +5,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import { IconBrandGithub, IconBrandX, IconBrandLinkedin, IconHome, IconMail, IconFileText } from "@tabler/icons-react";
 import { DotPattern } from "@/components/ui/dot-pattern";
 import { FloatingDock } from "@/components/ui/floating-dock";
-import { Send, CheckCircle, Loader2, RotateCcw } from "lucide-react"; // ✅ New Icons
+import { Send, CheckCircle, Loader2, RotateCcw, Star } from "lucide-react"; // ✅ Star Icon Added
 import NumberTicker from "@/components/ui/number-ticker";
+import { supabase } from "@/lib/supabase"; // ✅ Import Supabase
 
 export default function FooterSection() {
   
   const [visitCount, setVisitCount] = useState(0);
-  
-  // ✅ NEW STATES FOR FORM HANDLING
+  const [ratingStats, setRatingStats] = useState({ avg: "0.0", total: 0 }); // ✅ State for Ratings
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [resultMessage, setResultMessage] = useState("");
@@ -20,27 +20,40 @@ export default function FooterSection() {
   const currentYear = new Date().getFullYear();
 
   useEffect(() => {
-    const updateCount = async () => {
+    const fetchData = async () => {
       try {
-        const response = await fetch("https://api.counterapi.dev/v1/manavmerja/portfolio/up");
-        if (!response.ok) throw new Error("Network error");
-        const data = await response.json();
-        setVisitCount(data.count); 
+        // 1. Fetch Visits (Old Logic)
+        const visitRes = await fetch("https://api.counterapi.dev/v1/manavmerja/portfolio/up");
+        if (visitRes.ok) {
+            const data = await visitRes.json();
+            setVisitCount(data.count);
+        }
+
+        // 2. ✅ Fetch Ratings from Supabase (New Logic)
+        const { data: feedbackData, error } = await supabase
+            .from('feedback')
+            .select('rating');
+
+        if (!error && feedbackData && feedbackData.length > 0) {
+            const total = feedbackData.length;
+            const sum = feedbackData.reduce((acc, curr) => acc + curr.rating, 0);
+            const avg = (sum / total).toFixed(1); // 1 decimal place (e.g., 4.8)
+            setRatingStats({ avg, total });
+        }
+
       } catch (error) {
-        setVisitCount(120); 
+        console.error("Error fetching stats:", error);
       }
     };
-    updateCount();
+    fetchData();
   }, []);
 
-  // ✅ NEW SUBMIT HANDLER (No Redirect)
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
 
     const formData = new FormData(e.currentTarget);
-    // ⚠️ Replace with your actual Access Key
-    formData.append("access_key", "2e595453-e37e-4e29-ae52-c3a3f96b6d84"); 
+    formData.append("access_key", "YOUR_ACCESS_KEY_HERE"); // ⚠️ Update Key if needed
 
     try {
       const response = await fetch("https://api.web3forms.com/submit", {
@@ -63,7 +76,6 @@ export default function FooterSection() {
     }
   };
 
-  // ✅ RESET FORM FUNCTION
   const resetForm = () => {
     setIsSuccess(false);
     setResultMessage("");
@@ -102,14 +114,12 @@ export default function FooterSection() {
           </p>
         </motion.div>
 
-        {/* ✅ DYNAMIC FORM CONTAINER */}
+        {/* Form Container */}
         <motion.div
             layout
             className="w-full max-w-xl p-8 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-md shadow-2xl mb-12 overflow-hidden relative"
         >
             <AnimatePresence mode="wait">
-                
-                {/* STATE 1: SUCCESS MESSAGE */}
                 {isSuccess ? (
                     <motion.div
                         key="success"
@@ -133,8 +143,6 @@ export default function FooterSection() {
                         </button>
                     </motion.div>
                 ) : (
-
-                /* STATE 2: THE FORM */
                     <motion.form 
                         key="form"
                         initial={{ opacity: 0 }}
@@ -191,11 +199,13 @@ export default function FooterSection() {
                 </div>
                 <div className="flex flex-col">
                     <p className="tracking-widest text-gray-400">© {currentYear} MANAV MERJA</p>
-                    <p className="text-[10px] text-gray-600">SYSTEM STATUS: ONLINE 🟢</p>
+                    <p className="text-[10px] text-gray-600">SYSTEM STATUS: ONLINE</p>
                 </div>
             </div>
 
             <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
+                
+                {/* ✅ VISIT COUNTER */}
                 <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm">
                     <span className="relative flex h-2 w-2">
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
@@ -206,7 +216,18 @@ export default function FooterSection() {
                         <NumberTicker value={visitCount} className="tabular-nums" />
                     </span>
                 </div>
-                <p className="flex items-center gap-2 tracking-widest">
+
+                {/* ✅ NEW: RATING DISPLAY (Shows only if ratings exist) */}
+                {ratingStats.total > 0 && (
+                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm">
+                        <Star size={12} className="text-yellow-400 fill-yellow-400" />
+                        <span className="text-gray-400 tracking-wider">RATING:</span>
+                        <span className="text-white font-bold">{ratingStats.avg}</span>
+                        <span className="text-gray-600">({ratingStats.total})</span>
+                    </div>
+                )}
+
+                <p className="flex items-center gap-2 tracking-widest hidden md:flex">
                     BUILT WITH <span className="text-white font-bold">NEXT.JS</span> & <span className="text-cyan-500 font-bold">TAILWIND</span>
                 </p>
             </div>
