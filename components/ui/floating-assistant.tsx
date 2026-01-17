@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
-import { Send, X, User, Sparkles, Download, ArrowUp } from "lucide-react";
+import { Send, X, User, Sparkles, Download, ArrowUp, ScanEye } from "lucide-react"; // ✅ ScanEye Added
 import { cn } from "@/lib/utils";
 
 interface Message {
@@ -15,7 +15,6 @@ export default function FloatingAssistant() {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
   
-  // ✅ UPDATED: Initial Message shows Full Name & Navigation Powers
   const [messages, setMessages] = useState<Message[]>([
     { 
       role: "ai", 
@@ -25,12 +24,58 @@ export default function FloatingAssistant() {
   
   const [isLoading, setIsLoading] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
+  const [tooltipText, setTooltipText] = useState("System Online. Need a Co-Pilot?"); // ✅ Dynamic Text
   const [isAtBottom, setIsAtBottom] = useState(false);
-  
+  const [activeSection, setActiveSection] = useState<string | null>(null); // ✅ Track Section
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll();
 
-  // Scroll Detection
+  // --- 🕵️‍♂️ STRATEGY 3: SCROLL REACTION LOGIC ---
+  useEffect(() => {
+    const handleScroll = () => {
+      if (isOpen) return; // Chat khuli hai toh disturb mat karo
+
+      const scrollY = window.scrollY + window.innerHeight / 2; // Center of screen
+      
+      // Define Sections to Track
+      const sections = [
+        { id: "projects", msg: "Analyzing Missions... Need intel? 📂" },
+        { id: "stack", msg: "Scanning Core Systems... ⚡" },
+        { id: "journey", msg: "Accessing Flight Logs... 🚀" }
+      ];
+
+      let foundSection = false;
+
+      sections.forEach((sec) => {
+        const el = document.getElementById(sec.id);
+        if (el) {
+          const { offsetTop, offsetHeight } = el;
+          if (scrollY >= offsetTop && scrollY <= offsetTop + offsetHeight) {
+            
+            // Agar naye section me aaye, toh Alert bajao
+            if (activeSection !== sec.id) {
+               setActiveSection(sec.id);
+               setTooltipText(sec.msg);
+               setShowTooltip(true);
+               
+               // 4 second baad tooltip hata do
+               setTimeout(() => setShowTooltip(false), 4000);
+            }
+            foundSection = true;
+          }
+        }
+      });
+
+      if (!foundSection) setActiveSection(null);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [activeSection, isOpen]);
+
+
+  // Scroll Bottom Logic
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
     if (latest > 0.95) {
       setIsAtBottom(true);
@@ -44,6 +89,7 @@ export default function FloatingAssistant() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isOpen]);
 
+  // Initial Greeting
   useEffect(() => {
     const timer = setTimeout(() => setShowTooltip(true), 3000);
     return () => clearTimeout(timer);
@@ -120,31 +166,36 @@ export default function FloatingAssistant() {
     }
   };
 
-  // ✅ UPDATED SUGGESTIONS: Direct Navigation Commands
   const suggestions = ["Take me to Projects", "Show Skills", "Who is Manav?", "Tell a Joke"];
 
   return (
     <>
+      {/* --- TOOLTIP (Strategy 3: Dynamic Updates) --- */}
       <AnimatePresence>
         {!isOpen && showTooltip && !isAtBottom && (
           <motion.div
-            initial={{ opacity: 0, y: 10, scale: 0.8 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-            className="fixed bottom-24 right-6 z-[9989] bg-white text-black px-4 py-2 rounded-xl shadow-xl border border-cyan-500/50 font-bold text-xs flex items-center gap-2 after:content-[''] after:absolute after:top-full after:right-6 after:border-8 after:border-transparent after:border-t-white"
+            initial={{ opacity: 0, y: 10, scale: 0.8, x: 20 }}
+            animate={{ opacity: 1, y: 0, scale: 1, x: 0 }}
+            exit={{ opacity: 0, scale: 0.8, x: 20 }}
+            className="fixed bottom-24 right-6 z-[9989] bg-black/80 backdrop-blur-md text-cyan-400 px-4 py-3 rounded-xl shadow-[0_0_20px_rgba(6,182,212,0.3)] border border-cyan-500/50 font-mono text-xs flex items-center gap-3 after:content-[''] after:absolute after:top-full after:right-6 after:border-8 after:border-transparent after:border-t-cyan-500/50"
           >
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+            {/* Pulsing Dot */}
+            <span className="relative flex h-2 w-2 flex-shrink-0">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
             </span>
-            System Online. Need a Co-Pilot?
-            <button onClick={() => setShowTooltip(false)} className="ml-2 text-gray-400 hover:text-red-500">
+            
+            {/* Dynamic Text */}
+            <span className="font-bold tracking-wide">{tooltipText}</span>
+
+            <button onClick={() => setShowTooltip(false)} className="ml-2 text-gray-500 hover:text-white">
                 <X size={12} />
             </button>
           </motion.div>
         )}
       </AnimatePresence>
 
+      {/* --- FLOATING BUTTON (Strategy 1: Holographic Visuals) --- */}
       <AnimatePresence mode="wait">
         {!isOpen && isAtBottom ? (
             <motion.button
@@ -161,39 +212,55 @@ export default function FloatingAssistant() {
             </motion.button>
         ) : 
         !isOpen && (
-            <motion.button
-                key="chat-trigger"
-                initial={{ scale: 0, rotate: -180 }}
-                animate={{ scale: 1, rotate: 0 }}
-                exit={{ scale: 0, rotate: 180 }}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={() => { setIsOpen(true); setShowTooltip(false); }}
-                className="fixed bottom-6 right-6 z-[9990] w-16 h-16 flex items-center justify-center group"
-            >
-                <div className="relative w-full h-full">
-                    <Image 
-                        src="/ai-robot.png"
-                        alt="AI Assistant"
-                        fill
-                        priority
-                        sizes="64px"
-                        className="object-contain drop-shadow-[0_0_15px_rgba(34,211,238,0.6)] group-hover:scale-110 transition-transform duration-300"
-                    />
-                    <motion.div 
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                        className="absolute -top-1 -right-1 z-10"
-                    >
-                        <Sparkles size={12} className="text-yellow-300 filter drop-shadow-[0_0_5px_rgba(234,179,8,0.8)]" />
-                    </motion.div>
-                </div>
-                <div className="absolute inset-0 rounded-full bg-cyan-500/20 animate-ping opacity-30 duration-1000 z-0" />
-                <span className="absolute top-0 right-0 w-4 h-4 bg-red-500 rounded-full border-2 border-black flex items-center justify-center text-[10px] font-bold z-20">1</span>
-            </motion.button>
+            <div className="fixed bottom-6 right-6 z-[9990] w-20 h-20 flex items-center justify-center pointer-events-none"> {/* Container bada kiya */}
+                
+                {/* 🌀 STRATEGY 1: HOLOGRAPHIC RING ANIMATION */}
+                <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                    className="absolute inset-0 rounded-full border border-dashed border-cyan-500/30 w-full h-full"
+                />
+                 <motion.div
+                    animate={{ rotate: -360 }}
+                    transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+                    className="absolute inset-2 rounded-full border border-dotted border-cyan-400/20 w-[80%] h-[80%] m-auto"
+                />
+
+                <motion.button
+                    key="chat-trigger"
+                    initial={{ scale: 0 }}
+                    animate={{ 
+                        scale: 1,
+                        // 🌊 Breathing Effect when active section detected
+                        boxShadow: activeSection ? "0 0 30px rgba(6,182,212,0.6)" : "0 0 15px rgba(6,182,212,0.3)"
+                    }}
+                    exit={{ scale: 0 }}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => { setIsOpen(true); setShowTooltip(false); }}
+                    className="relative w-14 h-14 flex items-center justify-center group pointer-events-auto bg-black/50 rounded-full backdrop-blur-sm border border-cyan-500/50"
+                >
+                    <div className="relative w-10 h-10">
+                        <Image 
+                            src="/ai-robot.png"
+                            alt="AI Assistant"
+                            fill
+                            priority
+                            sizes="40px"
+                            className="object-contain drop-shadow-[0_0_10px_rgba(34,211,238,0.8)]"
+                        />
+                    </div>
+                    
+                    {/* Status Indicator */}
+                    <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border border-black flex items-center justify-center z-20">
+                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                    </span>
+                </motion.button>
+            </div>
         )}
       </AnimatePresence>
 
+      {/* --- CHAT WINDOW (Same as before) --- */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
