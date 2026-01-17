@@ -9,17 +9,18 @@ const slugs = [
   // Core / Web
   "typescript", "javascript", "react", "html5", "css", 
   "nodedotjs", "nextdotjs", "nginx", "vercel", 
-  "tailwindcss", "docker", "git", "github", 
   
   // Databases (New Additions Included) 🗄️
   "postgresql","supabase", "mongodb", "mysql", "php",
+  "seaborn", "langchain", "huggingface",
 
   // AI / ML / Data Science (New Additions Included) 🤖
   "python", "tensorflow", "scikit-learn", "pandas", "numpy", 
-  "jupyter", "matplotlib", "seaborn", "langchain", "huggingface",
+  "jupyter", "matplotlib",
 
   // Cloud (New Additions Included) ☁️
-  "googlecloud", "amazonwebservices" // AWS
+  "googlecloud", "amazonwebservices", // AWS
+  "tailwindcss", "docker", "git", "github",
 ];
 
 export default function TechStack() {
