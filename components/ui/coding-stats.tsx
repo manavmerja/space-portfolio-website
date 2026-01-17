@@ -91,71 +91,92 @@ export default function CodingStats() {
     return new Date(dateString).toLocaleDateString('en-US', options);
   };
 
+  // ✅ UPDATED: Robust Streak Logic
   const calculateGitHubStreak = () => {
-    if (!githubData?.contributions) return { current: 0, currentRange: "", longest: 0, longestRange: "", total: 0, totalRange: "" };
+    if (!githubData?.contributions) 
+      return { current: 0, currentRange: "No Data", longest: 0, longestRange: "No Data", total: 0, totalRange: "" };
     
     const contribs = githubData.contributions; 
-    // If selecting past year, total is specific to that year
     const total = contribs.reduce((acc, day) => acc + day.count, 0); 
     
     const firstDate = contribs[0]?.date ? formatDate(contribs[0].date) : "";
     const lastDate = contribs[contribs.length - 1]?.date ? formatDate(contribs[contribs.length - 1].date) : "";
 
-    // 1. Longest Streak
+    // 1. Longest Streak Calculation (Standard)
     let maxStreak = 0;
     let tempStreak = 0;
     let maxStart = "";
     let maxEnd = "";
     let tempStart = "";
+    let tempEnd = "";
 
     for (const day of contribs) {
         if (day.count > 0) {
             if (tempStreak === 0) tempStart = day.date;
             tempStreak++;
+            tempEnd = day.date;
         } else {
             if (tempStreak > maxStreak) {
                 maxStreak = tempStreak;
                 maxStart = tempStart;
-                maxEnd = contribs[contribs.indexOf(day) - 1].date;
+                maxEnd = tempEnd;
             }
             tempStreak = 0;
         }
     }
+    // Check agar streak end tak chal rahi thi
     if (tempStreak > maxStreak) {
         maxStreak = tempStreak;
         maxStart = tempStart;
-        maxEnd = contribs[contribs.length - 1].date;
+        maxEnd = tempEnd;
     }
 
-    // 2. Current Streak (Relative to the selected year's end)
-    const reversed = [...contribs].reverse();
+    // 2. Current Streak (Smart Logic) 🧠
+    const reversed = [...contribs].reverse(); // Newest first
     let currentStreak = 0;
-    let currentStart = "";
-    let currentEnd = reversed[0].date; 
+    let startCreateDate = "";
+    let endCreateDate = reversed[0].date; 
     
-    let isStreakActive = reversed[0].count > 0 || reversed[1]?.count > 0;
+    // Logic: Kahan se ginti shuru karein?
+    let i = 0;
     
-    if (isStreakActive) {
-        for (const day of reversed) {
-            if (day.count > 0) {
+    // Case A: Agar latest day (Aaj/Kal) mein contribution hai -> Start counting
+    if (reversed[0].count > 0) {
+        i = 0;
+        endCreateDate = reversed[0].date;
+    } 
+    // Case B: Agar latest day 0 hai, lekin usse pehle wale din contribution tha -> Start from yesterday
+    // (Matlab aaj chutti li hai, par streak zinda hai)
+    else if (reversed.length > 1 && reversed[1].count > 0) {
+        i = 1;
+        endCreateDate = reversed[1].date;
+    } 
+    // Case C: Agar Aaj aur Kal dono 0 hain -> Streak toot gayi ❌
+    else {
+        i = -1; 
+    }
+
+    if (i !== -1) {
+        for (; i < reversed.length; i++) {
+            if (reversed[i].count > 0) {
                 currentStreak++;
-                currentStart = day.date;
+                startCreateDate = reversed[i].date;
             } else {
-                if (day.date !== currentEnd) break; 
+                break; // Streak break ho gayi
             }
         }
     }
 
     return { 
         current: currentStreak, 
-        currentRange: currentStreak > 0 ? `${formatDate(currentStart)} - ${formatDate(currentEnd)}` : "No active streak",
+        currentRange: currentStreak > 0 ? `${formatDate(startCreateDate)} - ${formatDate(endCreateDate)}` : "No active streak",
         longest: maxStreak, 
         longestRange: maxStreak > 0 ? `${formatDate(maxStart)} - ${formatDate(maxEnd)}` : "N/A",
         total, 
         totalRange: `${firstDate} - ${lastDate}`
     };
   };
-
+  
   const ghStats = calculateGitHubStreak();
 
   return (

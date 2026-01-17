@@ -1,44 +1,71 @@
 "use client";
-import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Unlock, Cpu, Code, GraduationCap, Globe, Trophy, Github, Linkedin, Twitter } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence, useInView } from "framer-motion";
+import { Unlock, Cpu, Code, GraduationCap, Globe, Trophy, Github, Linkedin, Twitter, Lock } from "lucide-react";
 
 export default function AboutSection() {
   const [isUnlocked, setIsUnlocked] = useState(false);
+  const [statusText, setStatusText] = useState("ENCRYPTED DATA");
+  const [statusColor, setStatusColor] = useState("text-gray-500");
+  
+  // 🕵️‍♂️ SCROLL DETECTION
+  const ref = useRef(null);
+  const isInView = useInView(ref, { amount: 0.5, once: true }); // 50% dikhne par trigger hoga
+
+  useEffect(() => {
+    if (isInView && !isUnlocked) {
+      // 🎬 Cinematic Sequence
+      const sequence = async () => {
+        // Step 1: Detect
+        setStatusText("DETECTING USER ID...");
+        setStatusColor("text-cyan-400");
+        
+        await new Promise(r => setTimeout(r, 4000)); // Wait 4s
+        
+        // Step 2: Decrypt
+        setStatusText("BYPASSING FIREWALL...");
+        setStatusColor("text-red-400");
+        
+        await new Promise(r => setTimeout(r, 2000)); // Wait 2s
+        
+        // Step 3: Unlock
+        setStatusText("ACCESS GRANTED");
+        setStatusColor("text-green-400");
+        setIsUnlocked(true);
+      };
+      
+      sequence();
+    }
+  }, [isInView, isUnlocked]);
 
   return (
-    // ✅ FIX 1: 'min-h-screen' taki section puri height le.
-    <section id="about" className="w-full min-h-screen relative flex items-center justify-center overflow-hidden bg-black">
+    <section 
+        id="about" 
+        ref={ref} // Attach Ref here to track scroll
+        className="w-full min-h-screen relative flex items-center justify-center overflow-hidden bg-black"
+    >
       
-      {/* ================================================= */}
-      {/* 🎬 1. BACKGROUND VIDEO (FULL SCREEN FILLER)       */}
-      {/* ================================================= */}
+      {/* 🎬 BACKGROUND VIDEO */}
       <div className="absolute inset-0 z-0">
          <video
             autoPlay
             loop
             muted
             playsInline
-            // ✅ FIX 2: 'object-cover' video ko stretch karke gaps bhar dega
-            className="w-full h-full object-cover opacity-60" 
+            className="w-full h-full object-cover opacity-50" 
          >
             <source src="/encryption.webm" type="video/webm" />
          </video>
-         
-         {/* Gradient Overlay (Taaki video black background me seamless blend ho) */}
          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black" />
-         <div className="absolute inset-0 bg-black/40" /> {/* Thoda dark tint text ke liye */}
+         <div className="absolute inset-0 bg-black/60" /> 
       </div>
 
-
-      {/* ================================================= */}
-      {/* 🔒 2. INTERACTIVE CONTENT (LOCK / PROFILE)        */}
-      {/* ================================================= */}
+      {/* 🔒 INTERACTIVE CONTENT */}
       <div className="relative z-10 w-full max-w-4xl px-4">
         
         <AnimatePresence mode="wait">
             
-            {/* --- STATE A: LOCKED (Show Lock Icon) --- */}
+            {/* --- STATE A: LOCKED (Auto-Unlock Animation) --- */}
             {!isUnlocked ? (
                 <motion.div
                     key="locked"
@@ -46,37 +73,36 @@ export default function AboutSection() {
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 1.1, filter: "blur(10px)" }}
                     transition={{ duration: 0.5 }}
+                    // Click bhi kaam karega agar user fast hai
                     onClick={() => setIsUnlocked(true)}
                     className="flex flex-col items-center justify-center cursor-pointer py-20"
                 >
                     <div className="relative mb-8 group">
-                        {/* Glow Effect */}
-                        <div className="absolute -inset-4 rounded-full bg-cyan-500/20 blur-2xl animate-pulse"></div>
+                        {/* Glow Effect based on Status */}
+                        <div className={`absolute -inset-4 rounded-full blur-2xl animate-pulse ${statusColor === 'text-red-400' ? 'bg-red-500/20' : 'bg-cyan-500/20'}`}></div>
                         
                         {/* Lock Circle */}
-                        <div className="relative h-28 w-28 bg-black/60 rounded-full flex items-center justify-center border border-white/20 backdrop-blur-md shadow-2xl group-hover:scale-110 transition-transform duration-500">
-                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.8)]">
-                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                            </svg>
+                        <div className="relative h-28 w-28 bg-black/60 rounded-full flex items-center justify-center border border-white/20 backdrop-blur-md shadow-2xl">
+                            <Lock className={`h-10 w-10 transition-colors duration-300 ${statusColor === 'text-green-400' ? 'text-green-400' : 'text-white'}`} />
                         </div>
                     </div>
                     
-                    <h2 className="text-5xl md:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500 tracking-widest font-space-grotesk text-center">
-                    ENCRYPTION
+                    <h2 className="text-4xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500 tracking-widest font-space-grotesk text-center">
+                        ENCRYPTION
                     </h2>
-                    <p className="text-cyan-400 mt-4 font-mono text-sm tracking-[0.3em] animate-pulse uppercase">
-                    [ Tap to Decrypt User Data ]
+                    
+                    {/* Dynamic Status Text */}
+                    <p className={`mt-4 font-mono text-sm tracking-[0.3em] animate-pulse uppercase ${statusColor} transition-colors duration-300`}>
+                        [ {statusText} ]
                     </p>
                 </motion.div>
             ) : (
                 
-            /* --- STATE B: UNLOCKED (Show Profile Card) --- */
+            /* --- STATE B: UNLOCKED (Profile Card) --- */
                 <motion.div
                     key="unlocked"
                     initial={{ opacity: 0, scale: 0.9, y: 20 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
                     transition={{ duration: 0.5, ease: "circOut" }}
                     className="w-full bg-black/80 border border-white/10 rounded-3xl p-6 md:p-10 backdrop-blur-xl shadow-2xl"
                 >
@@ -127,7 +153,7 @@ export default function AboutSection() {
   );
 }
 
-// --- Helper Components for Clean Code ---
+// --- Helper Components ---
 const InfoCard = ({ icon, title, value, color }: any) => {
     const colors: any = {
         purple: "text-purple-400 bg-purple-500/20 border-purple-500/20",
