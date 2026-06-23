@@ -1,15 +1,15 @@
-import HeroSection from "@/components/ui/hero-section";
-import Navbar from "@/components/ui/navbar";
-import FloatingAssistant from "@/components/ui/floating-assistant";
-import AboutSection from "@/components/ui/about-section";
-import TechStack from "@/components/ui/tech-stack";
-import ProjectsSection from "@/components/ui/projects-section";
-import CodingStats from "@/components/ui/coding-stats"; 
-import JourneySection from "@/components/ui/journey-section";
-import FooterSection from "@/components/ui/footer-section";
-import Preloader from "@/components/ui/preloader";
-import SmoothScroll from "@/components/ui/smooth-scroll"; 
-import FeedbackPopup from "@/components/ui/feedback-popup";
+import HeroSection from "@/components/sections/hero-section";
+import Navbar from "@/components/navigation/navbar";
+import FloatingAssistant from "@/components/features/floating-assistant";
+import AboutSection from "@/components/sections/about-section";
+import TechStack from "@/components/sections/tech-stack";
+import ProjectsSection from "@/components/sections/projects-section";
+import CodingStats from "@/components/sections/coding-stats"; 
+import JourneySection from "@/components/sections/journey-section";
+import FooterSection from "@/components/sections/footer-section";
+import Preloader from "@/components/common/preloader";
+import SmoothScroll from "@/components/common/smooth-scroll"; 
+import FeedbackPopup from "@/components/features/feedback-popup";
 // import SpotlightCursor from "@/components/ui/spotlight-cursor";
  
 
