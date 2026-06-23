@@ -86,7 +86,7 @@ export const NavItems = ({ items, className, onItemClick }: NavItemsProps) => {
         <Link
           onMouseEnter={() => setHovered(idx)}
           onClick={onItemClick}
-          className="relative px-4 py-2 text-gray-300 hover:text-white transition-colors"
+          className="relative px-4 py-2 text-gray-300 hover:text-white transition-colors whitespace-nowrap"
           key={`link-${idx}`}
           href={item.link}
           // ✅ FIX: Resume opens in new tab
