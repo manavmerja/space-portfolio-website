@@ -16,14 +16,14 @@ import {
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
-  // ✅ LINKS CONFIGURATION
+  // ✅ LINKS CONFIGURATION (Contact Me is now a regular link)
   const navItems = [
-    { name: "Home", link: "#home" },       // Hero Section
-    { name: "About", link: "#about" },     // About Section
-    { name: "Tech Stack", link: "#stack" },// Tech Stack Section
+    { name: "About", link: "#about" },       // About Section
+    { name: "Tech Stack", link: "#stack" },  // Tech Stack Section
     { name: "Projects", link: "#projects" }, // Projects Section
-    { name: "Timeline", link: "#journey" }, // Journey Section
+    { name: "Timeline", link: "#journey" },   // Journey Section
     { name: "Resume", link: "/resume.pdf" }, // Resume File
+    { name: "Contact Me", link: "#contact" }, // Contact Section
   ];
 
   return (
@@ -33,9 +33,13 @@ export default function Navbar() {
       <NavBody>
         <NavbarLogo />
         <NavItems items={navItems} />
-        {/* Contact Button Linked to Footer */}
-        <NavbarButton href="#contact" variant="primary">
-          Contact Me
+        {/* Highlighted Blog Button */}
+        <NavbarButton 
+          href="/blog" 
+          variant="primary" 
+          className="px-6 py-2.5 text-xs md:text-sm font-extrabold tracking-widest uppercase hover:scale-105 active:scale-95 transition-all"
+        >
+          My Blog&apos;s
         </NavbarButton>
       </NavBody>
 
@@ -60,8 +64,12 @@ export default function Navbar() {
               {item.name}
             </Link>
           ))}
-          <NavbarButton href="#contact" className="w-full mt-4">
-            Contact Me
+          {/* Highlighted Mobile Blog Button */}
+          <NavbarButton 
+            href="/blog" 
+            className="w-full mt-4 py-3 text-sm font-extrabold tracking-widest uppercase"
+          >
+            My Blog&apos;s
           </NavbarButton>
         </MobileNavMenu>
       </MobileNav>
