@@ -31,9 +31,9 @@ export default function HeroSection() {
         {/* ✅ FIX: Added '\u00A0' for forced spaces */}
         <ContainerTextFlip
           words={[
-            "FULL\u00A0STACK\u00A0DEV", 
-            "ML\u00A0ENGINEER", 
-            "PROBLEM\u00A0SOLVER"
+            "IIT\u00A0HACKATHON\u00A0WINNER", 
+            "DATA\u00A0&\u00A0AI\u00A0ENGINEER", 
+            "SOFTWARE\u00A0ENGINEER"
           ]}
           interval={3000} 
           animationDuration={1000}
