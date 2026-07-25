@@ -148,6 +148,8 @@ function StarsBackground({
           starColor={starColor}
         />
       </motion.div>
+      {/* Smooth bottom gradient overlay so the ellipse transition into the next section gracefully */}
+      <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-black via-black/80 to-transparent pointer-events-none z-10" />
       {children}
     </div>
   );
