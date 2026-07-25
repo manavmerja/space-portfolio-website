@@ -7,20 +7,21 @@ import { LightRays } from "@/components/ui/light-rays";
 
 const slugs = [
   // Core / Web
-  "typescript", "javascript", "react", "html5", "css", 
-  "nodedotjs", "nextdotjs", "nginx", "vercel", 
+  "typescript", "javascript", "react", "html5", "css3", 
+  "nodedotjs", "nextdotjs", "nginx", "vercel", "tailwindcss",
   
-  // Databases (New Additions Included) 🗄️
-  "postgresql","supabase", "mongodb", "mysql", "php",
-  "seaborn", "langchain", "huggingface",
+  // Databases & Backend 🗄️
+  "postgresql", "supabase", "mongodb", "mysql", "php", "fastapi",
+  
+  // AI / ML / Data Science 🤖
+  "python", "scikit-learn", "pandas", "numpy", 
+  "jupyter", "matplotlib", "seaborn", "langchain", "huggingface",
 
-  // AI / ML / Data Science (New Additions Included) 🤖
-  "python", "tensorflow", "scikit-learn", "pandas", "numpy", 
-  "jupyter", "matplotlib",
+  // Cloud & DevOps ☁️
+  "googlecloud", "amazonwebservices", "azure", "docker", "linux", "render", "railway",
 
-  // Cloud (New Additions Included) ☁️
-  "googlecloud", "amazonwebservices", // AWS
-  "tailwindcss", "docker", "git", "github",
+  // Tools & IDEs 🛠️
+  "git", "github", "postman", "hoppscotch", "vscode", "canva"
 ];
 
 export default function TechStack() {
