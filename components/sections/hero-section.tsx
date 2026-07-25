@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { ContainerTextFlip } from "@/components/ui/container-text-flip";
-import Starfield from "@/components/ui/starfield";
+import { StarsBackground } from "@/components/ui/stars-background";
 import { motion } from "framer-motion"; // ✅ Animation ke liye
 import { ChevronDown } from "lucide-react"; // ✅ Arrow Icon
 
@@ -9,11 +9,11 @@ export default function HeroSection() {
   return (
     <section id="home" className="h-screen w-full relative overflow-hidden bg-black flex flex-col items-center justify-center">
       
-      {/* 1. WARP SPEED BACKGROUND */}
-      <Starfield 
-        starCount={1200} 
-        starColor="255, 255, 255"
-        speed={0.05} 
+      {/* 1. WARP SPEED / PARALLAX STARS BACKGROUND */}
+      <StarsBackground 
+        starColor="#ffffff"
+        speed={40} 
+        className="absolute inset-0 z-0"
       />
 
       {/* 2. Main Content */}
