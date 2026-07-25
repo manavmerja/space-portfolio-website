@@ -4,6 +4,7 @@ import Image from "next/image";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
 import { Send, X, User, Sparkles, Download, ArrowUp, ScanEye } from "lucide-react"; // ✅ ScanEye Added
 import { cn } from "@/lib/utils";
+import Strands from "@/components/ui/strands";
 
 interface Message {
   role: "user" | "ai";
@@ -170,32 +171,9 @@ export default function FloatingAssistant() {
 
   return (
     <>
-      {/* --- TOOLTIP (Strategy 3: Dynamic Updates) --- */}
-      <AnimatePresence>
-        {!isOpen && showTooltip && !isAtBottom && (
-          <motion.div
-            initial={{ opacity: 0, y: 10, scale: 0.8, x: 20 }}
-            animate={{ opacity: 1, y: 0, scale: 1, x: 0 }}
-            exit={{ opacity: 0, scale: 0.8, x: 20 }}
-            className="fixed bottom-24 right-6 z-[9989] bg-black/80 backdrop-blur-md text-cyan-400 px-4 py-3 rounded-xl shadow-[0_0_20px_rgba(6,182,212,0.3)] border border-cyan-500/50 font-mono text-xs flex items-center gap-3 after:content-[''] after:absolute after:top-full after:right-6 after:border-8 after:border-transparent after:border-t-cyan-500/50"
-          >
-            {/* Pulsing Dot */}
-            <span className="relative flex h-2 w-2 flex-shrink-0">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
-            </span>
-            
-            {/* Dynamic Text */}
-            <span className="font-bold tracking-wide">{tooltipText}</span>
+      {/* --- TOOLTIP REMOVED AS REQUESTED --- */}
 
-            <button onClick={() => setShowTooltip(false)} className="ml-2 text-gray-500 hover:text-white">
-                <X size={12} />
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* --- FLOATING BUTTON (Strategy 1: Holographic Visuals) --- */}
+      {/* --- FLOATING BUTTON --- */}
       <AnimatePresence mode="wait">
         {!isOpen && isAtBottom ? (
             <motion.button
@@ -206,24 +184,24 @@ export default function FloatingAssistant() {
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={scrollToTop}
-                className="fixed bottom-6 right-6 z-[9990] w-14 h-14 rounded-full bg-white text-black flex items-center justify-center shadow-[0_0_20px_rgba(255,255,255,0.6)] border-2 border-black"
+                className="fixed bottom-6 right-6 z-[9990] w-16 h-16 rounded-full bg-white text-black flex items-center justify-center shadow-[0_0_20px_rgba(255,255,255,0.6)] border-2 border-black"
             >
                 <ArrowUp size={24} className="animate-bounce" />
             </motion.button>
         ) : 
         !isOpen && (
-            <div className="fixed bottom-6 right-6 z-[9990] w-20 h-20 flex items-center justify-center pointer-events-none"> {/* Container bada kiya */}
+            <div className="fixed bottom-6 right-6 z-[9990] w-24 h-24 flex items-center justify-center pointer-events-none">
                 
-                {/* 🌀 STRATEGY 1: HOLOGRAPHIC RING ANIMATION */}
+                {/* 🌀 HOLOGRAPHIC RING ANIMATION */}
                 <motion.div
                     animate={{ rotate: 360 }}
                     transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-                    className="absolute inset-0 rounded-full border border-dashed border-cyan-500/30 w-full h-full"
+                    className="absolute inset-0 rounded-full border border-dashed border-cyan-500/40 w-full h-full"
                 />
                  <motion.div
                     animate={{ rotate: -360 }}
                     transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
-                    className="absolute inset-2 rounded-full border border-dotted border-cyan-400/20 w-[80%] h-[80%] m-auto"
+                    className="absolute inset-2 rounded-full border border-dotted border-cyan-400/30 w-[80%] h-[80%] m-auto"
                 />
 
                 <motion.button
@@ -231,36 +209,34 @@ export default function FloatingAssistant() {
                     initial={{ scale: 0 }}
                     animate={{ 
                         scale: 1,
-                        // 🌊 Breathing Effect when active section detected
-                        boxShadow: activeSection ? "0 0 30px rgba(6,182,212,0.6)" : "0 0 15px rgba(6,182,212,0.3)"
+                        boxShadow: activeSection ? "0 0 35px rgba(6,182,212,0.7)" : "0 0 20px rgba(6,182,212,0.4)"
                     }}
                     exit={{ scale: 0 }}
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
                     onClick={() => { setIsOpen(true); setShowTooltip(false); }}
-                    className="relative w-14 h-14 flex items-center justify-center group pointer-events-auto bg-black/50 rounded-full backdrop-blur-sm border border-cyan-500/50"
+                    className="relative w-16 h-16 flex items-center justify-center group pointer-events-auto bg-black/60 rounded-full backdrop-blur-md border border-cyan-500/60 overflow-hidden"
                 >
-                    <div className="relative w-10 h-10">
-                        <Image 
-                            src="/ai-robot.png"
-                            alt="AI Assistant"
-                            fill
-                            priority
-                            sizes="40px"
-                            className="object-contain drop-shadow-[0_0_10px_rgba(34,211,238,0.8)]"
+                    <div className="relative w-16 h-16 rounded-full overflow-hidden flex items-center justify-center">
+                        <Strands
+                          colors={["#06B6D4", "#7C3AED", "#F97316", "#EAB308"]}
+                          count={4}
+                          speed={0.7}
+                          amplitude={1.2}
+                          waviness={2.2}
+                          thickness={1.0}
+                          glow={3.0}
+                          scale={1.8}
+                          glass
+                          glassSize={1.1}
                         />
                     </div>
-                    
-                    {/* Status Indicator */}
-                    <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border border-black flex items-center justify-center z-20">
-                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                    </span>
                 </motion.button>
             </div>
         )}
       </AnimatePresence>
 
-      {/* --- CHAT WINDOW (Same as before) --- */}
+      {/* --- CHAT WINDOW --- */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -276,13 +252,23 @@ export default function FloatingAssistant() {
           >
             <div className="flex items-center justify-between p-4 border-b border-white/10 bg-gradient-to-r from-cyan-900/40 to-transparent">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg overflow-hidden relative">
-                    <Image src="/ai-robot.png" alt="Nebula" fill className="object-cover" sizes="40px" />
+                <div className="w-12 h-12 rounded-full bg-black/80 border border-cyan-500/50 flex items-center justify-center shadow-lg overflow-hidden relative">
+                    <Strands
+                      colors={["#06B6D4", "#7C3AED", "#F97316"]}
+                      count={4}
+                      speed={0.7}
+                      amplitude={1.2}
+                      waviness={2}
+                      thickness={1.0}
+                      glow={3.0}
+                      scale={1.6}
+                      glass
+                    />
                 </div>
                 <div>
                     <h3 className="font-bold text-white tracking-wider font-space-grotesk text-lg">N.E.B.U.L.A</h3>
-                    <p className="text-[10px] text-cyan-400 font-mono flex items-center gap-1">
-                        <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"/> ONLINE
+                    <p className="text-[10px] text-cyan-400 font-mono">
+                        ONLINE
                     </p>
                 </div>
               </div>
@@ -303,11 +289,21 @@ export default function FloatingAssistant() {
                   )}
                 >
                   <div className={cn(
-                    "w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1 shadow-lg overflow-hidden relative",
-                    msg.role === "ai" ? "bg-cyan-900/50 border border-cyan-500/30" : "bg-white/10 text-white"
+                    "w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 mt-1 shadow-lg overflow-hidden relative",
+                    msg.role === "ai" ? "bg-black/80 border border-cyan-500/40" : "bg-white/10 text-white"
                   )}>
                     {msg.role === "ai" ? (
-                        <Image src="/ai-robot.png" alt="AI" fill className="object-cover" sizes="32px" />
+                        <Strands
+                          colors={["#06B6D4", "#7C3AED", "#F97316"]}
+                          count={3}
+                          speed={0.7}
+                          amplitude={1}
+                          waviness={2}
+                          thickness={0.9}
+                          glow={2.5}
+                          scale={1.4}
+                          glass
+                        />
                     ) : (
                         <User size={14} />
                     )}
