@@ -106,7 +106,7 @@ export default function FooterSection() {
           viewport={{ once: true }}
           className="text-center mb-10"
         >
-          <h2 className="text-4xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500 font-space-grotesk">
+          <h2 className="text-4xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500 font-doto">
             TRANSMISSION DECK
           </h2>
           <p className="text-cyan-500/80 mt-4 text-sm font-mono tracking-widest uppercase">
