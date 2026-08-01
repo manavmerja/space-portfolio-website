@@ -89,7 +89,7 @@ export default function JourneySection() {
       </div>
 
       <div className="text-center mb-20 relative z-20 px-4">
-        <h2 className="text-4xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500 font-space-grotesk">
+        <h2 className="text-4xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500 font-doto">
           FLIGHT LOGS
         </h2>
         <p className="text-cyan-500/80 mt-2 text-sm font-mono tracking-widest uppercase">
@@ -143,7 +143,7 @@ export default function JourneySection() {
                     </span>
                 </div>
 
-                <h3 className="text-2xl font-bold text-white mb-1 flex items-center gap-2 font-space-grotesk">
+                <h3 className="text-2xl font-bold text-white mb-1 flex items-center gap-2 font-figtree">
                     {item.movieTitle} {item.icon}
                 </h3>
                 
