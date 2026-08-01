@@ -187,7 +187,7 @@ export default function CodingStats() {
       </div>
 
       <div className="text-center mb-16 relative z-20 px-4">
-        <h2 className="text-4xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500 font-space-grotesk">
+        <h2 className="text-4xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500 font-doto">
           MISSION CONTROL
         </h2>
         <p className="text-cyan-500/80 mt-2 text-sm font-mono tracking-widest uppercase">
