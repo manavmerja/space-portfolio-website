@@ -1,6 +1,12 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+@theme {
+  --font-figtree: 'Figtree', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-doto: 'Doto', sans-serif;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 /* <CHANGE> Added custom properties for futuristic dark theme */
