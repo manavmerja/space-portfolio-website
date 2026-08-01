@@ -43,7 +43,7 @@ export default function TechStack() {
           transition={{ duration: 0.8 }}
           className="flex flex-col items-center gap-2 mb-10 text-center"
         >
-          <h2 className="text-4xl md:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500 font-space-grotesk tracking-tighter">
+          <h2 className="text-4xl md:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500 font-doto tracking-tighter">
             MY ARSENAL
           </h2>
           <p className="text-cyan-400 text-xs md:text-sm font-mono tracking-[0.3em] uppercase">
