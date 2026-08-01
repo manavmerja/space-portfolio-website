@@ -224,11 +224,11 @@ export default function FloatingAssistant() {
                           speed={0.5}
                           amplitude={1.2}
                           waviness={2.5}
-                          thickness={1.0}
-                          glow={1.0}
+                          thickness={1.4}
+                          glow={0.4}
                           scale={1.8}
                           glass
-                          glassSize={1.1}
+                          glassSize={1.5}
                         />
                     </div>
                 </motion.button>
