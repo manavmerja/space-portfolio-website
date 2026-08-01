@@ -100,7 +100,7 @@ export const NavItems = ({ items, className, onItemClick }: NavItemsProps) => {
               transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
             />
           )}
-          <span className="relative z-20">{item.name}</span>
+          <span className="relative z-20 font-medium">{item.name}</span>
         </Link>
       ))}
     </div>
