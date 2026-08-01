@@ -221,11 +221,11 @@ export default function FloatingAssistant() {
                         <Strands
                           colors={["#06B6D4", "#7C3AED", "#F97316", "#EAB308"]}
                           count={4}
-                          speed={0.7}
+                          speed={0.5}
                           amplitude={1.2}
-                          waviness={2.2}
+                          waviness={2.5}
                           thickness={1.0}
-                          glow={3.0}
+                          glow={1.0}
                           scale={1.8}
                           glass
                           glassSize={1.1}
@@ -256,11 +256,11 @@ export default function FloatingAssistant() {
                     <Strands
                       colors={["#06B6D4", "#7C3AED", "#F97316"]}
                       count={4}
-                      speed={0.7}
+                      speed={0.5}
                       amplitude={1.2}
-                      waviness={2}
+                      waviness={2.5}
                       thickness={1.0}
-                      glow={3.0}
+                      glow={1.0}
                       scale={1.6}
                       glass
                     />
@@ -296,11 +296,11 @@ export default function FloatingAssistant() {
                         <Strands
                           colors={["#06B6D4", "#7C3AED", "#F97316"]}
                           count={3}
-                          speed={0.7}
+                          speed={0.5}
                           amplitude={1}
                           waviness={2}
                           thickness={0.9}
-                          glow={2.5}
+                          glow={1.0}
                           scale={1.4}
                           glass
                         />
