@@ -87,7 +87,7 @@ export default function AboutSection() {
                         </div>
                     </div>
                     
-                    <h2 className="text-4xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500 tracking-widest font-space-grotesk text-center">
+                    <h2 className="text-4xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500 tracking-widest font-doto text-center">
                         ENCRYPTION
                     </h2>
                     
@@ -109,7 +109,7 @@ export default function AboutSection() {
                     {/* Header */}
                     <div className="flex justify-between items-start border-b border-white/10 pb-6 mb-6">
                         <div>
-                            <h3 className="text-3xl md:text-4xl font-bold text-white tracking-wide font-space-grotesk">MANAV MERJA</h3>
+                            <h3 className="text-3xl md:text-4xl font-bold text-white tracking-wide font-doto">MANAV MERJA</h3>
                             <p className="text-cyan-400 font-mono text-xs md:text-sm flex items-center gap-2 mt-2">
                                 <span className="relative flex h-2 w-2">
                                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
