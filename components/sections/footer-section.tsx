@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { IconBrandGithub, IconBrandX, IconBrandLinkedin, IconHome, IconMail, IconFileText } from "@tabler/icons-react";
 import { DotPattern } from "@/components/ui/dot-pattern";
 import { FloatingDock } from "@/components/ui/floating-dock";
+import { FluidGradientText } from "@/components/ui/fluid-gradient-text";
 import { Send, CheckCircle, Loader2, RotateCcw, Star } from "lucide-react"; // ✅ Star Icon Added
 import NumberTicker from "@/components/ui/number-ticker";
 import { supabase } from "@/lib/supabase"; // ✅ Import Supabase
@@ -187,8 +188,13 @@ export default function FooterSection() {
         </motion.div>
 
         {/* Floating Dock */}
-        <div className="mb-12">
+        <div className="mb-8">
              <FloatingDock items={links} desktopClassName="bg-black/80 border-white/10 shadow-2xl" />
+        </div>
+
+        {/* ✦ FLUID GRADIENT TEXT WATERMARK ✦ */}
+        <div className="w-full h-32 md:h-48 my-4 text-white">
+            <FluidGradientText text="MANAV MERJA" svgViewBoxHeight={240} />
         </div>
 
         {/* Bottom Strip */}
