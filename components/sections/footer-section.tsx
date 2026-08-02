@@ -7,6 +7,7 @@ import { DotPattern } from "@/components/ui/dot-pattern";
 import { FloatingDock } from "@/components/ui/floating-dock";
 import { FluidGradientText } from "@/components/ui/fluid-gradient-text";
 import { AuroraText } from "@/components/ui/aurora-text";
+import { BackgroundBeamsWithCollision } from "@/components/ui/background-beams-with-collision";
 import {
   PreviewLinkCard,
   PreviewLinkCardTrigger,
@@ -99,168 +100,170 @@ export default function FooterSection() {
   ];
 
   return (
-    <section id="contact" className="w-full relative pt-20 pb-8 bg-black overflow-hidden border-t border-white/10 flex flex-col items-center">
+    <section id="contact" className="w-full relative bg-black overflow-hidden border-t border-white/10 flex flex-col items-center">
       
-      <div className="absolute inset-0 z-0 h-full w-full bg-black">
-         <DotPattern className="opacity-40 [mask-image:radial-gradient(600px_circle_at_center,white,transparent)]" width={20} height={20} cx={1} cy={1} cr={1} />
-      </div>
-
-      <div className="max-w-5xl w-full mx-auto px-4 relative z-20 flex flex-col items-center">
-        
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-10"
-        >
-          <h2 className="text-4xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500 font-doto">
-            TRANSMISSION DECK
-          </h2>
-          <p className="text-cyan-500/80 mt-4 text-sm font-mono tracking-widest uppercase">
-            [ INITIALIZE CONNECTION ]
-          </p>
-        </motion.div>
-
-        {/* Form Container */}
-        <motion.div
-            layout
-            className="w-full max-w-xl p-8 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-md shadow-2xl mb-12 overflow-hidden relative"
-        >
-            <AnimatePresence mode="wait">
-                {isSuccess ? (
-                    <motion.div
-                        key="success"
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.9 }}
-                        className="flex flex-col items-center justify-center py-10 text-center"
-                    >
-                        <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mb-4 border border-green-500/50">
-                            <CheckCircle className="text-green-400 w-8 h-8" />
-                        </div>
-                        <h3 className="text-2xl font-bold text-white tracking-wide mb-2">MISSION ACCOMPLISHED</h3>
-                        <p className="text-cyan-400 font-mono text-sm tracking-widest mb-8">
-                            [ {resultMessage} ]
-                        </p>
-                        <button 
-                            onClick={resetForm}
-                            className="flex items-center gap-2 px-6 py-2 bg-white/10 rounded-full text-sm font-bold text-gray-300 hover:bg-white/20 transition-all hover:text-white"
-                        >
-                            <RotateCcw size={14} /> NEW TRANSMISSION
-                        </button>
-                    </motion.div>
-                ) : (
-                    <motion.form 
-                        key="form"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        onSubmit={handleSubmit}
-                        className="space-y-4"
-                    >
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <label className="text-xs font-mono text-gray-400 ml-1">CODENAME</label>
-                                <input type="text" name="name" required placeholder="Enter Name" className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-cyan-500 transition-colors" />
-                            </div>
-                            <div className="space-y-2">
-                                <label className="text-xs font-mono text-gray-400 ml-1">FREQUENCY (EMAIL)</label>
-                                <input type="email" name="email" required placeholder="Enter Email" className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-cyan-500 transition-colors" />
-                            </div>
-                        </div>
-                        <div className="space-y-2">
-                            <label className="text-xs font-mono text-gray-400 ml-1">TRANSMISSION DATA</label>
-                            <textarea rows={4} name="message" required placeholder="Type your message..." className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-cyan-500 transition-colors resize-none" />
-                        </div>
-                        
-                        <button 
-                            type="submit" 
-                            disabled={isSubmitting}
-                            className="w-full flex items-center justify-center gap-2 bg-white text-black font-bold py-3 rounded-lg hover:bg-cyan-400 transition-all duration-300 mt-2 disabled:opacity-70 disabled:cursor-not-allowed"
-                        >
-                            {isSubmitting ? (
-                                <>
-                                    <Loader2 size={18} className="animate-spin" /> TRANSMITTING...
-                                </>
-                            ) : (
-                                <>
-                                    <Send size={18} /> SEND SIGNAL
-                                </>
-                            )}
-                        </button>
-                    </motion.form>
-                )}
-            </AnimatePresence>
-        </motion.div>
-
-        {/* Floating Dock */}
-        <div className="mb-8">
-             <FloatingDock items={links} desktopClassName="bg-black/80 border-white/10 shadow-2xl" />
+      <BackgroundBeamsWithCollision className="pt-20 pb-8 bg-black min-h-[50rem]">
+        <div className="absolute inset-0 z-0 h-full w-full bg-black">
+           <DotPattern className="opacity-40 [mask-image:radial-gradient(600px_circle_at_center,white,transparent)]" width={20} height={20} cx={1} cy={1} cr={1} />
         </div>
 
-        {/* ✦ FLUID GRADIENT TEXT WATERMARK ✦ */}
-        <div className="w-full h-32 md:h-48 my-4 text-white">
-            <FluidGradientText text="MANAV MERJA" svgViewBoxHeight={240} />
+        <div className="max-w-5xl w-full mx-auto px-4 relative z-20 flex flex-col items-center">
+          
+          {/* Header */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-10"
+          >
+            <h2 className="text-4xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500 font-doto">
+              TRANSMISSION DECK
+            </h2>
+            <p className="text-cyan-500/80 mt-4 text-sm font-mono tracking-widest uppercase">
+              [ INITIALIZE CONNECTION ]
+            </p>
+          </motion.div>
+
+          {/* Form Container */}
+          <motion.div
+              layout
+              className="w-full max-w-xl p-8 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-md shadow-2xl mb-12 overflow-hidden relative"
+          >
+              <AnimatePresence mode="wait">
+                  {isSuccess ? (
+                      <motion.div
+                          key="success"
+                          initial={{ opacity: 0, scale: 0.9 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0.9 }}
+                          className="flex flex-col items-center justify-center py-10 text-center"
+                      >
+                          <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mb-4 border border-green-500/50">
+                              <CheckCircle className="text-green-400 w-8 h-8" />
+                          </div>
+                          <h3 className="text-2xl font-bold text-white tracking-wide mb-2">MISSION ACCOMPLISHED</h3>
+                          <p className="text-cyan-400 font-mono text-sm tracking-widest mb-8">
+                              [ {resultMessage} ]
+                          </p>
+                          <button 
+                              onClick={resetForm}
+                              className="flex items-center gap-2 px-6 py-2 bg-white/10 rounded-full text-sm font-bold text-gray-300 hover:bg-white/20 transition-all hover:text-white"
+                          >
+                              <RotateCcw size={14} /> NEW TRANSMISSION
+                          </button>
+                      </motion.div>
+                  ) : (
+                      <motion.form 
+                          key="form"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          onSubmit={handleSubmit}
+                          className="space-y-4"
+                      >
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div className="space-y-2">
+                                  <label className="text-xs font-mono text-gray-400 ml-1">CODENAME</label>
+                                  <input type="text" name="name" required placeholder="Enter Name" className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-cyan-500 transition-colors" />
+                              </div>
+                              <div className="space-y-2">
+                                  <label className="text-xs font-mono text-gray-400 ml-1">FREQUENCY (EMAIL)</label>
+                                  <input type="email" name="email" required placeholder="Enter Email" className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-cyan-500 transition-colors" />
+                              </div>
+                          </div>
+                          <div className="space-y-2">
+                              <label className="text-xs font-mono text-gray-400 ml-1">TRANSMISSION DATA</label>
+                              <textarea rows={4} name="message" required placeholder="Type your message..." className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-cyan-500 transition-colors resize-none" />
+                          </div>
+                          
+                          <button 
+                              type="submit" 
+                              disabled={isSubmitting}
+                              className="w-full flex items-center justify-center gap-2 bg-white text-black font-bold py-3 rounded-lg hover:bg-cyan-400 transition-all duration-300 mt-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                          >
+                              {isSubmitting ? (
+                                  <>
+                                      <Loader2 size={18} className="animate-spin" /> TRANSMITTING...
+                                  </>
+                              ) : (
+                                  <>
+                                      <Send size={18} /> SEND SIGNAL
+                                  </>
+                              )}
+                          </button>
+                      </motion.form>
+                  )}
+              </AnimatePresence>
+          </motion.div>
+
+          {/* Floating Dock */}
+          <div className="mb-8">
+               <FloatingDock items={links} desktopClassName="bg-black/80 border-white/10 shadow-2xl" />
+          </div>
+
+          {/* ✦ FLUID GRADIENT TEXT WATERMARK ✦ */}
+          <div className="w-full h-32 md:h-48 my-4 text-white">
+              <FluidGradientText text="MANAV MERJA" svgViewBoxHeight={240} />
+          </div>
+
+          {/* Bottom Strip */}
+          <div className="w-full pt-6 border-t border-white/10 flex flex-col md:flex-row items-center justify-between text-xs font-mono text-gray-500 gap-4">
+              <div className="flex items-center gap-4">
+                  <div className="relative h-10 w-10 border border-white/10 rounded-full bg-black/50 p-2 backdrop-blur-sm shadow-[0_0_15px_rgba(34,211,238,0.1)]">
+                      <Image src="/logo.png" alt="Manav Merja" fill className="object-contain invert p-1" sizes="40px" />
+                  </div>
+                  <div className="flex flex-col">
+                      <p className="tracking-widest text-gray-400">© {currentYear} MANAV MERJA</p>
+                  </div>
+              </div>
+
+              <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
+                  
+                  {/* ✅ VISIT COUNTER */}
+                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm">
+                      <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                      </span>
+                      <span className="text-gray-400 tracking-wider">VISITS:</span>
+                      <span className="text-cyan-400 font-bold">
+                          <NumberTicker value={visitCount} className="tabular-nums" />
+                      </span>
+                  </div>
+
+                  {/* ✅ NEW: RATING DISPLAY (Shows only if ratings exist) */}
+                  {ratingStats.total > 0 && (
+                      <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm">
+                          <Star size={12} className="text-yellow-400 fill-yellow-400" />
+                          <span className="text-gray-400 tracking-wider">RATING:</span>
+                          <span className="text-white font-bold">{ratingStats.avg}</span>
+                          <span className="text-gray-600">({ratingStats.total})</span>
+                      </div>
+                  )}
+
+                  <PreviewLinkCard>
+                    <PreviewLinkCardTrigger>
+                      <a 
+                          href="https://chat.whatsapp.com/CPQcPrkj4U2EeNm9y81CEy" 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1.5 text-sm md:text-base font-semibold tracking-widest text-gray-300 hover:text-white transition-colors"
+                      >
+                          Collaborate with <AuroraText className="font-bold text-base md:text-lg" speed={1.5}>Team Heisenberg</AuroraText> ↗
+                      </a>
+                    </PreviewLinkCardTrigger>
+                    <PreviewLinkCardContent>
+                      <PreviewLinkCardImage />
+                      <div className="mt-2 text-center">
+                        <p className="text-xs text-gray-300">Click to join the WhatsApp Community</p>
+                      </div>
+                    </PreviewLinkCardContent>
+                  </PreviewLinkCard>
+              </div>
+          </div>
+
         </div>
-
-        {/* Bottom Strip */}
-        <div className="w-full pt-6 border-t border-white/10 flex flex-col md:flex-row items-center justify-between text-xs font-mono text-gray-500 gap-4">
-            <div className="flex items-center gap-4">
-                <div className="relative h-10 w-10 border border-white/10 rounded-full bg-black/50 p-2 backdrop-blur-sm shadow-[0_0_15px_rgba(34,211,238,0.1)]">
-                    <Image src="/logo.png" alt="Manav Merja" fill className="object-contain invert p-1" sizes="40px" />
-                </div>
-                <div className="flex flex-col">
-                    <p className="tracking-widest text-gray-400">© {currentYear} MANAV MERJA</p>
-                </div>
-            </div>
-
-            <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
-                
-                {/* ✅ VISIT COUNTER */}
-                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm">
-                    <span className="relative flex h-2 w-2">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-                    </span>
-                    <span className="text-gray-400 tracking-wider">VISITS:</span>
-                    <span className="text-cyan-400 font-bold">
-                        <NumberTicker value={visitCount} className="tabular-nums" />
-                    </span>
-                </div>
-
-                {/* ✅ NEW: RATING DISPLAY (Shows only if ratings exist) */}
-                {ratingStats.total > 0 && (
-                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm">
-                        <Star size={12} className="text-yellow-400 fill-yellow-400" />
-                        <span className="text-gray-400 tracking-wider">RATING:</span>
-                        <span className="text-white font-bold">{ratingStats.avg}</span>
-                        <span className="text-gray-600">({ratingStats.total})</span>
-                    </div>
-                )}
-
-                <PreviewLinkCard>
-                  <PreviewLinkCardTrigger>
-                    <a 
-                        href="https://chat.whatsapp.com/CPQcPrkj4U2EeNm9y81CEy" 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-1.5 text-sm md:text-base font-semibold tracking-widest text-gray-300 hover:text-white transition-colors"
-                    >
-                        Collaborate with <AuroraText className="font-bold text-base md:text-lg" speed={1.5}>Team Heisenberg</AuroraText> ↗
-                    </a>
-                  </PreviewLinkCardTrigger>
-                  <PreviewLinkCardContent>
-                    <PreviewLinkCardImage />
-                    <div className="mt-2 text-center">
-                      <p className="text-xs text-gray-300">Click to join the WhatsApp Community</p>
-                    </div>
-                  </PreviewLinkCardContent>
-                </PreviewLinkCard>
-            </div>
-        </div>
-
-      </div>
+      </BackgroundBeamsWithCollision>
     </section>
   );
 }
