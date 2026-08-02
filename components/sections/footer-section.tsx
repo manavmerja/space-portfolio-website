@@ -6,6 +6,13 @@ import { IconBrandGithub, IconBrandX, IconBrandLinkedin, IconHome, IconMail, Ico
 import { DotPattern } from "@/components/ui/dot-pattern";
 import { FloatingDock } from "@/components/ui/floating-dock";
 import { FluidGradientText } from "@/components/ui/fluid-gradient-text";
+import { AuroraText } from "@/components/ui/aurora-text";
+import {
+  PreviewLinkCard,
+  PreviewLinkCardTrigger,
+  PreviewLinkCardContent,
+  PreviewLinkCardImage,
+} from "@/components/ui/preview-link-card";
 import { Send, CheckCircle, Loader2, RotateCcw, Star } from "lucide-react"; // ✅ Star Icon Added
 import NumberTicker from "@/components/ui/number-ticker";
 import { supabase } from "@/lib/supabase"; // ✅ Import Supabase
@@ -205,7 +212,6 @@ export default function FooterSection() {
                 </div>
                 <div className="flex flex-col">
                     <p className="tracking-widest text-gray-400">© {currentYear} MANAV MERJA</p>
-                    <p className="text-[10px] text-gray-600">SYSTEM STATUS: ONLINE</p>
                 </div>
             </div>
 
@@ -233,9 +239,24 @@ export default function FooterSection() {
                     </div>
                 )}
 
-                <p className="flex items-center gap-2 tracking-widest hidden md:flex">
-                    BUILT WITH <span className="text-white font-bold">NEXT.JS</span> & <span className="text-cyan-500 font-bold">TAILWIND</span>
-                </p>
+                <PreviewLinkCard>
+                  <PreviewLinkCardTrigger>
+                    <a 
+                        href="https://chat.whatsapp.com/CPQcPrkj4U2EeNm9y81CEy" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-1.5 text-sm md:text-base font-semibold tracking-widest text-gray-300 hover:text-white transition-colors"
+                    >
+                        Collaborate with <AuroraText className="font-bold text-base md:text-lg" speed={1.5}>Team Heisenberg</AuroraText> ↗
+                    </a>
+                  </PreviewLinkCardTrigger>
+                  <PreviewLinkCardContent>
+                    <PreviewLinkCardImage />
+                    <div className="mt-2 text-center">
+                      <p className="text-xs text-gray-300">Click to join the WhatsApp Community</p>
+                    </div>
+                  </PreviewLinkCardContent>
+                </PreviewLinkCard>
             </div>
         </div>
 
