@@ -8,12 +8,13 @@ import RetroGrid from "@/components/ui/retro-grid";
 // ✅ Project Data for Clean Mapping
 const projects = [
   {
-    title: "/next-event.com",
-    name: "Next Event",
-    desc: "Full-Stack event aggregator platform with real-time updates and seamless ticket booking.",
-    img: "/project-next-event.png",
-    live: "https://v0-event-aggregator-web-app.vercel.app/",
-    code: "https://github.com/manavmerja/Next-Event.git" // Update specific repo link if needed
+    title: "/gravity-lens.app",
+    name: "Gravity Lens",
+    desc: "Interactive gravitational lensing simulator and astrophysical web app.",
+    img: "/Gravity-Lens.png",
+    live: "https://gravity-lens.vercel.app/",
+    code: "https://github.com/manavmerja/Gravity-Lens",
+    badge: null
   },
   {
     title: "/niti-ai.bot",
@@ -21,15 +22,17 @@ const projects = [
     desc: "AI-Powered Policy Research Assistant. Analyzes documents and answers queries instantly using OpenAI.",
     img: "/projects-niti-ai.png",
     live: "https://niti-ai-rose.vercel.app/",
-    code: "https://github.com/manavmerja/Niti-Ai.git"
+    code: "https://github.com/manavmerja/Niti-Ai.git",
+    badge: null
   },
   {
-    title: "Nebula Cloud Tool",
+    title: "/nebula-cloud.app",
     name: "Nebula Cloud",
     desc: "AI-Powered Infrastructure Visualizer. Converts text prompts into Architecture Diagrams & Terraform code.",
-    img: "/project-nebula.png", // Ensure this image is in public folder
+    img: "/project-nebula.png",
     live: "https://nebula-cloud-seven.vercel.app/",
-    code: "https://github.com/manavmerja/Nebula-Cloud.git"
+    code: "https://github.com/manavmerja/Nebula-Cloud.git",
+    badge: "🏆 IIT HACKATHON WINNER"
   }
 ];
 
@@ -60,9 +63,16 @@ export default function ProjectsSection() {
             
             {/* 📱 MOBILE VIEW: STATIC CARD (No 3D Animation) */}
             <div className="block md:hidden w-[90vw] max-w-sm bg-white/5 border border-white/10 rounded-2xl p-5 shadow-2xl backdrop-blur-sm">
-                <h3 className="font-bold text-xl text-slate-100 mb-2">
-                    {project.name}
-                </h3>
+                <div className="flex items-center justify-between gap-2 mb-2">
+                  <h3 className="font-bold text-xl text-slate-100">
+                      {project.name}
+                  </h3>
+                  {project.badge && (
+                    <span className="px-2.5 py-1 text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 rounded-full shadow-[0_0_10px_rgba(245,158,11,0.2)]">
+                      {project.badge}
+                    </span>
+                  )}
+                </div>
                 <div className="text-sm font-normal text-slate-400 line-clamp-2 mb-4">
                     {project.desc}
                 </div>
@@ -93,9 +103,16 @@ export default function ProjectsSection() {
             <div className="hidden md:block">
                 <PinContainer title={project.title}>
                 <div className="flex basis-full flex-col p-4 tracking-tight text-slate-100/50 sm:basis-[24rem] w-[26rem] h-[28rem]">
-                    <h3 className="max-w-xs !pb-2 !m-0 font-bold text-xl text-slate-100">
-                    {project.name}
-                    </h3>
+                    <div className="flex items-center justify-between gap-2 !pb-2 !m-0">
+                      <h3 className="font-bold text-xl text-slate-100">
+                      {project.name}
+                      </h3>
+                      {project.badge && (
+                        <span className="px-2.5 py-1 text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 rounded-full shadow-[0_0_10px_rgba(245,158,11,0.2)] whitespace-nowrap">
+                          {project.badge}
+                        </span>
+                      )}
+                    </div>
                     <div className="text-sm !m-0 !p-0 font-normal leading-relaxed text-slate-400 line-clamp-2">
                     {project.desc}
                     </div>
